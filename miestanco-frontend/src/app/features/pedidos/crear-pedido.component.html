@@ -135,6 +135,12 @@
                       [id]="'btn-mas-mon-' + i">
                 <mat-icon>add</mat-icon>
               </button>
+              <button class="cp-carton-btn"
+                      (click)="setCantidadMoneda(i, linea.cantidad + 10)"
+                      [id]="'btn-carton-mon-' + i"
+                      title="Añadir +10">
+                +10
+              </button>
             </div>
           </div>
         }
