@@ -1,45 +1,59 @@
 <div class="login-page">
-  <!-- Fondo animado -->
-  <div class="login-bg">
-    <div class="glow glow--1"></div>
-    <div class="glow glow--2"></div>
-  </div>
 
   <div class="login-card fade-in">
-    <!-- Logo / Marca -->
+
+    <!-- Marca -->
     <div class="login-header">
       <div class="login-logo">🏪</div>
       <h1 class="login-title">MiEstanco</h1>
-      <p class="login-subtitle">Gestión de pedidos</p>
+      <p class="login-sub">Gestión de pedidos</p>
     </div>
 
     <!-- Formulario -->
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form" id="login-form">
 
-      <mat-form-field appearance="fill" class="login-field">
-        <mat-label>Usuario</mat-label>
-        <input matInput formControlName="username" id="login-username"
-               autocomplete="username" placeholder="padre / madre / trabajadora1" />
+      <div class="field">
+        <label class="field__label" for="login-username">Usuario</label>
+        <input class="field__input"
+               id="login-username"
+               type="text"
+               formControlName="username"
+               autocomplete="username"
+               placeholder="padre / trabajadora1"
+               [class.field__input--error]="form.get('username')?.invalid && form.get('username')?.touched" />
         @if (form.get('username')?.hasError('required') && form.get('username')?.touched) {
-          <mat-error>El usuario es obligatorio</mat-error>
+          <span class="field__error">El usuario es obligatorio</span>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="fill" class="login-field">
-        <mat-label>Contraseña</mat-label>
-        <input matInput type="password" formControlName="password" id="login-password"
-               autocomplete="current-password" />
+      <div class="field">
+        <label class="field__label" for="login-password">Contraseña</label>
+        <div class="field__input-wrap">
+          <input class="field__input"
+                 id="login-password"
+                 [type]="showPass() ? 'text' : 'password'"
+                 formControlName="password"
+                 autocomplete="current-password"
+                 placeholder="••••"
+                 [class.field__input--error]="form.get('password')?.invalid && form.get('password')?.touched" />
+          <button type="button" class="field__toggle" (click)="togglePass()" tabindex="-1">
+            {{ showPass() ? '🙈' : '👁' }}
+          </button>
+        </div>
         @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
-          <mat-error>La contraseña es obligatoria</mat-error>
+          <span class="field__error">La contraseña es obligatoria</span>
         }
-      </mat-form-field>
+      </div>
 
       @if (errorMsg()) {
-        <div class="login-error fade-in">⚠️ {{ errorMsg() }}</div>
+        <div class="login-error fade-in" role="alert">
+          ⚠️ {{ errorMsg() }}
+        </div>
       }
 
-      <button type="submit" id="login-submit"
-              class="btn-primary login-btn"
+      <button type="submit"
+              id="login-submit"
+              class="login-btn"
               [disabled]="form.invalid || loading()">
         @if (loading()) {
           <mat-spinner diameter="20" />
@@ -47,6 +61,8 @@
           Entrar
         }
       </button>
+
     </form>
   </div>
+
 </div>
