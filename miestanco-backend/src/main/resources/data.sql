@@ -17,6 +17,7 @@ INSERT IGNORE INTO monedas (id, denominacion, valor_centimos) VALUES
 INSERT IGNORE INTO usuarios (nombre, username, password_hash, rol, activo, fecha_creacion) VALUES
 ('Padre (Admin)',     'padre',      '$2a$10$VUNhK0D5oRkW3c/uSVnTP.om3tieNCTTt07cJuI6.O6OilXjVl3Hm', 'ADMIN',      true, NOW()),
 ('Madre (Admin)',     'madre',      '$2a$10$VUNhK0D5oRkW3c/uSVnTP.om3tieNCTTt07cJuI6.O6OilXjVl3Hm', 'ADMIN',      true, NOW()),
+('Admin',            'admin',      '$2a$10$VUNhK0D5oRkW3c/uSVnTP.om3tieNCTTt07cJuI6.O6OilXjVl3Hm', 'ADMIN',      true, NOW()),
 ('Trabajadora 1',    'trabajadora1','$2a$10$VUNhK0D5oRkW3c/uSVnTP.om3tieNCTTt07cJuI6.O6OilXjVl3Hm', 'TRABAJADOR', true, NOW()),
 ('Trabajadora 2',    'trabajadora2','$2a$10$VUNhK0D5oRkW3c/uSVnTP.om3tieNCTTt07cJuI6.O6OilXjVl3Hm', 'TRABAJADOR', true, NOW());
 
