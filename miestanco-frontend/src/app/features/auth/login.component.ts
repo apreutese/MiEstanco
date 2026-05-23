@@ -1,4 +1,4 @@
-import { Component, signal, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal, inject, ChangeDetectionStrategy, ApplicationRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +24,7 @@ export class LoginComponent {
   private auth = inject(AuthService);
   private snack = inject(MatSnackBar);
   private router = inject(Router);
+  private appRef = inject(ApplicationRef);
 
   loading = signal(false);
   errorMsg = signal('');
@@ -45,6 +46,8 @@ export class LoginComponent {
       next: () => {
         this.loading.set(false);
         this.snack.open('¡Bienvenido!', '', { duration: 1500 });
+        // En Zoneless mode, notificar al scheduler antes de navegar
+        this.appRef.tick();
         this.router.navigate(['/pedidos']);
       },
       error: (err) => {
