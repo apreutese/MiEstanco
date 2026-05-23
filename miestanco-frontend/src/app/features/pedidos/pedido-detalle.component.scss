@@ -1,66 +1,67 @@
-.detalle { max-width: 700px; }
+// pedido-detalle.component.scss — tokens v3, mobile-first
 
+.detalle { max-width: 680px; }
+
+// ── HEADER ───────────────────────────────────────────────────
 .detalle-header {
-  display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1.5rem;
-  &__info { display: flex; align-items: center; gap: 1rem; }
+  display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.25rem;
+  &__info { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
 }
 .btn-back {
   display: inline-flex; align-items: center; gap: .3rem;
-  color: var(--text-muted); text-decoration: none;
-  font-size: .875rem; transition: var(--transition);
-  &:hover { color: var(--primary-light); }
-  mat-icon { font-size: 1.1rem; }
+  color: var(--text-2); text-decoration: none;
+  font-size: .875rem; transition: color var(--t);
+  &:hover { color: var(--primary); }
+  mat-icon { font-size: 20px !important; width: 20px !important; height: 20px !important; }
 }
 
-// Barra progreso
-.progreso-section { margin-bottom: 1.5rem; }
+// ── PROGRESO ─────────────────────────────────────────────────
+.progreso-section { margin-bottom: 1.25rem; }
 .progreso-header {
   display: flex; justify-content: space-between;
-  font-size: .85rem; color: var(--text-secondary); margin-bottom: .4rem;
+  font-size: .82rem; color: var(--text-2); margin-bottom: .4rem;
 }
-.progreso-pct { font-weight: 600; color: var(--primary-light); }
-.progreso-track {
-  height: 8px; background: var(--bg-card); border-radius: 4px; overflow: hidden;
-}
+.progreso-pct { font-weight: 700; color: var(--primary); }
+.progreso-track { height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
 .progreso-fill {
-  height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  height: 100%; background: var(--primary);
   border-radius: 4px; transition: width .5s ease;
 }
 
-// Body
+// ── BODY ─────────────────────────────────────────────────────
 .detalle-body { display: flex; flex-direction: column; gap: 1rem; }
 
-// Info card
+// ── INFO CARD ────────────────────────────────────────────────
 .info-card { display: flex; flex-direction: column; gap: .75rem; }
 .info-row {
   display: flex; align-items: flex-start; gap: .75rem;
-  mat-icon { color: var(--primary-light); margin-top: .1rem; flex-shrink: 0; }
+  mat-icon { color: var(--primary); margin-top: .1rem; flex-shrink: 0; }
 }
-.info-label { font-size: .75rem; color: var(--text-muted); margin-bottom: .1rem; }
-.info-value { font-size: .9rem; color: var(--text-primary); }
+.info-label { font-size: .72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .1rem; }
+.info-value  { font-size: .9rem; color: var(--text); font-weight: 500; }
 
-// Sección ítems
-.items-section { }
+// ── ÍTEMS ────────────────────────────────────────────────────
 .section-title {
   display: flex; align-items: center; gap: .5rem;
-  font-size: 1rem; font-weight: 600; color: var(--text-primary);
+  font-size: .95rem; font-weight: 700; color: var(--text);
   margin-bottom: .75rem;
-  mat-icon { color: var(--primary-light); }
+  mat-icon { color: var(--primary); }
 }
-.items-list { display: flex; flex-direction: column; gap: .5rem; }
+.items-list { display: flex; flex-direction: column; gap: .4rem; }
+
 .item-row {
-  display: flex; align-items: center; gap: .75rem; padding: .75rem;
-  background: var(--bg-surface); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); transition: var(--transition);
+  display: flex; align-items: center; gap: .75rem; padding: .85rem;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-md); transition: all var(--t);
+  min-height: 56px; // touch target en móvil
 
   &--done {
-    opacity: .6;
+    opacity: .55; border-color: transparent; background: var(--surface);
     .item-nombre { text-decoration: line-through; }
-    background: var(--bg); border-color: transparent;
   }
 }
 
-// Checkbox custom
+// ── CHECKBOX GRANDE ──────────────────────────────────────────
 .checkbox-wrap {
   position: relative; cursor: pointer; flex-shrink: 0;
   input[type="checkbox"] {
@@ -71,34 +72,35 @@
     }
   }
   .checkmark {
-    width: 22px; height: 22px; border: 2px solid var(--border);
-    border-radius: 6px; background: var(--bg-card);
+    width: 26px; height: 26px; border: 2px solid var(--border-2);
+    border-radius: 8px; background: var(--bg);
     display: flex; align-items: center; justify-content: center;
-    transition: var(--transition);
+    transition: all var(--t);
     &::after {
       content: ''; display: none;
-      width: 6px; height: 11px;
-      border: 2px solid white; border-top: none; border-left: none;
+      width: 7px; height: 12px;
+      border: 2.5px solid white; border-top: none; border-left: none;
       transform: rotate(45deg) translateY(-2px);
     }
   }
 }
 
-.item-info { flex: 1; min-width: 0; }
-.item-nombre { display: block; font-size: .9rem; color: var(--text-primary); }
-.item-marca  { font-size: .75rem; color: var(--text-muted); }
-.item-right  { display: flex; flex-direction: column; align-items: flex-end; }
-.item-cantidad { font-size: .8rem; color: var(--text-muted); }
-.item-precio   { font-size: .875rem; font-weight: 600; color: var(--text-primary); }
+.item-info   { flex: 1; min-width: 0; }
+.item-nombre { display: block; font-size: .92rem; color: var(--text); font-weight: 500; }
+.item-marca  { font-size: .75rem; color: var(--text-3); }
+.item-right  { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; flex-shrink: 0; }
+.item-cantidad { font-size: .8rem; color: var(--text-3); font-weight: 700; }
+.item-precio   { font-size: .88rem; font-weight: 700; color: var(--primary); }
+
 .items-total {
   margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--border);
-  text-align: right; font-size: .875rem; color: var(--text-secondary);
-  strong { color: var(--text-primary); }
+  text-align: right; font-size: .875rem; color: var(--text-2);
+  strong { color: var(--primary); font-size: 1rem; }
 }
 
-// Acciones
+// ── ACCIONES ─────────────────────────────────────────────────
 .detalle-actions {
-  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-  margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+  margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
 }
-.hint { font-size: .8rem; color: var(--text-muted); }
+.hint { font-size: .8rem; color: var(--text-3); }

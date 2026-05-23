@@ -1,35 +1,39 @@
-// Estilos en styles.scss global
+// maquinas-list.component.scss — tokens v3
 
 .modal--wide { max-width: 680px; }
 
-.form-row {
-  display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
-}
-
 .chip-list { display: flex; flex-wrap: wrap; gap: .3rem; }
 .chip {
-  background: rgba(196,30,42,.12); color: var(--primary-light);
-  padding: .15rem .5rem; border-radius: 20px; font-size: .72rem; font-weight: 500;
-  &--moneda { background: rgba(212,160,23,.12); color: var(--accent); }
-  &--more   { background: var(--bg-surface); color: var(--text-muted); }
+  background: var(--primary-dim); color: var(--primary);
+  padding: .15rem .5rem; border-radius: 20px; font-size: .72rem; font-weight: 600;
+  &--moneda { background: var(--accent-dim); color: var(--accent); }
+  &--more   { background: var(--surface-2); color: var(--text-3); }
 }
 
+// ── CHECKBOX GRID (modal) ─────────────────────────────────────
 .checkbox-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .4rem;
-  max-height: 180px; overflow-y: auto; padding: .5rem;
-  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  &--monedas { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); max-height: 120px; }
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .4rem;
+  max-height: 200px; overflow-y: auto; padding: .5rem;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  &--monedas { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); max-height: 140px; }
+
+  // En móvil: más ancho para facilitar tap
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    max-height: 240px;
+  }
 }
 .checkbox-item {
-  display: flex; align-items: center; gap: .5rem; padding: .4rem .6rem;
-  border-radius: var(--radius-sm); border: 1px solid transparent;
-  cursor: pointer; transition: var(--transition); font-size: .82rem;
-  input[type="checkbox"] { accent-color: var(--primary); flex-shrink: 0; }
-  span { flex: 1; color: var(--text-secondary); }
-  small { color: var(--text-muted); font-size: .75rem; }
+  display: flex; align-items: center; gap: .5rem; padding: .6rem .75rem;
+  border-radius: var(--r-sm); border: 1.5px solid transparent;
+  cursor: pointer; transition: all var(--t); font-size: .85rem;
+  min-height: 44px; // touch target
+  input[type="checkbox"] { accent-color: var(--primary); flex-shrink: 0; width: 18px; height: 18px; }
+  span { flex: 1; color: var(--text-2); }
+  small { color: var(--text-3); font-size: .72rem; }
   &.selected {
-    border-color: var(--primary); background: rgba(196,30,42,.08);
-    span { color: var(--text-primary); }
+    border-color: var(--primary); background: var(--primary-dim);
+    span { color: var(--text); font-weight: 600; }
   }
-  &:hover { background: var(--bg-card-hover); }
+  &:hover { background: var(--surface-3); }
 }
