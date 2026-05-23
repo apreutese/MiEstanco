@@ -47,22 +47,22 @@
 }
 
 // ── MARLBORO GOLD ─────────────────────────────────────────────
-// Crema cálido + dorado Marlboro literalmente
+// Mismo esquema neutro que Marlboro Red, primary dorado
 [data-theme="marlboro-gold"] {
-  --bg:          #FEFCF6;
-  --surface:     #FAF5E8;
-  --surface-2:   #F3EACF;
-  --surface-3:   #EAD9B0;
-  --primary:     #C9973A;       // Dorado Marlboro exacto
+  --bg:          #FFFFFF;
+  --surface:     #F7F7F7;
+  --surface-2:   #EFEFEF;
+  --surface-3:   #E5E5E5;
+  --primary:     #C9973A;       // Dorado Marlboro
   --primary-h:   #A87C28;
-  --primary-dim: rgba(201,151,58,.12);
+  --primary-dim: rgba(201,151,58,.1);
   --accent:      #CC0000;       // Rojo como acento
   --accent-dim:  rgba(204,0,0,.08);
-  --text:        #1E1508;
-  --text-2:      #5A4020;
-  --text-3:      #9A7848;
-  --border:      #E0D0A8;
-  --border-2:    #C8B888;
+  --text:        #111111;
+  --text-2:      #555555;
+  --text-3:      #999999;
+  --border:      #E0E0E0;
+  --border-2:    #C8C8C8;
 
   --pend:    #D97706;  --pend-bg:  rgba(217,119,6,.1);
   --prep:    #2563EB;  --prep-bg:  rgba(37,99,235,.1);
