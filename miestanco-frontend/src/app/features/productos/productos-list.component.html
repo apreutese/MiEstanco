@@ -1,0 +1,97 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="page-header__left">
+      <h1 class="page-title">Productos</h1>
+      <span class="page-count">{{ productosFiltrados().length }}</span>
+    </div>
+    <div class="page-header__actions">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" id="productos-search" placeholder="Buscar..."
+               [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+      </div>
+      <button class="btn-primary" id="btn-nuevo-producto" (click)="abrirCrear()">
+        <mat-icon>add</mat-icon> Nuevo producto
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton skeleton-table" style="height: 200px;"></div>
+  } @else if (productosFiltrados().length === 0) {
+    <div class="empty-state"><mat-icon>inventory_2</mat-icon><h3>No hay productos</h3></div>
+  } @else {
+    <div class="admin-table-wrap fade-in">
+      <table class="admin-table">
+        <thead><tr>
+          <th>Producto</th><th>Marca</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th>
+        </tr></thead>
+        <tbody>
+          @for (p of productosFiltrados(); track p.id) {
+            <tr [class.inactivo]="!p.activo">
+              <td><strong>{{ p.nombre }}</strong></td>
+              <td>{{ p.marca || '—' }}</td>
+              <td><span class="badge-categoria">{{ categoriaLabel(p.categoria) }}</span></td>
+              <td><strong>{{ p.precio | number:'1.2-2' }}€</strong></td>
+              <td><span [class]="p.activo ? 'badge-activo' : 'badge-inactivo'">{{ p.activo ? 'Activo' : 'Inactivo' }}</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-action" [id]="'btn-edit-prod-' + p.id" (click)="abrirEditar(p)" title="Editar"><mat-icon>edit</mat-icon></button>
+                  <button class="btn-action" [class]="p.activo ? 'btn-action--danger' : 'btn-action--success'"
+                          [id]="'btn-toggle-prod-' + p.id" (click)="toggleActivo(p)" [title]="p.activo ? 'Desactivar' : 'Activar'">
+                    <mat-icon>{{ p.activo ? 'block' : 'check_circle' }}</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (modalAbierto()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal fade-in" (click)="$event.stopPropagation()" id="modal-producto">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ editando() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+        <button class="btn-action" (click)="cerrarModal()"><mat-icon>close</mat-icon></button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label">Nombre *</label>
+          <input class="form-input" id="prod-nombre" placeholder="Marlboro Rojo"
+                 [value]="form().nombre" (input)="setField('nombre', $any($event.target).value)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Marca</label>
+          <input class="form-input" id="prod-marca" placeholder="Marlboro"
+                 [value]="form().marca || ''" (input)="setField('marca', $any($event.target).value)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoría *</label>
+          <select class="form-select" id="prod-categoria"
+                  [value]="form().categoria" (change)="setField('categoria', $any($event.target).value)">
+            @for (c of categorias; track c) {
+              <option [value]="c">{{ categoriaLabel(c) }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Precio (€) *</label>
+          <input class="form-input" id="prod-precio" type="number" step="0.01" min="0" placeholder="5.50"
+                 [value]="form().precio" (change)="setField('precio', +$any($event.target).value)" />
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-primary" id="btn-guardar-producto"
+                [disabled]="!form().nombre || form().precio <= 0 || guardando()"
+                (click)="guardar()">
+          {{ guardando() ? 'Guardando...' : (editando() ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

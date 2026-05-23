@@ -1,0 +1,107 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="page-header__left">
+      <h1 class="page-title">Bares</h1>
+      <span class="page-count">{{ baresFiltrados().length }}</span>
+    </div>
+    <div class="page-header__actions">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" id="bares-search" placeholder="Buscar..."
+               [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+      </div>
+      <button class="btn-primary" id="btn-nuevo-bar" (click)="abrirCrear()">
+        <mat-icon>add</mat-icon> Nuevo bar
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton skeleton-table" style="height: 200px;"></div>
+  } @else if (baresFiltrados().length === 0) {
+    <div class="empty-state"><mat-icon>store</mat-icon><h3>No hay bares</h3><p>Crea el primero</p></div>
+  } @else {
+    <div class="admin-table-wrap fade-in">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Código</th><th>Nombre</th><th>Teléfono</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (bar of baresFiltrados(); track bar.id) {
+            <tr [class.inactivo]="!bar.activo">
+              <td><code>{{ bar.codigo }}</code></td>
+              <td>{{ bar.nombre }}</td>
+              <td>{{ bar.telefono || '—' }}</td>
+              <td>
+                <span [class]="bar.activo ? 'badge-activo' : 'badge-inactivo'">
+                  {{ bar.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-action" [id]="'btn-edit-bar-' + bar.id" (click)="abrirEditar(bar)" title="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="btn-action" [class]="bar.activo ? 'btn-action--danger' : 'btn-action--success'"
+                          [id]="'btn-toggle-bar-' + bar.id" (click)="toggleActivo(bar)"
+                          [title]="bar.activo ? 'Desactivar' : 'Activar'">
+                    <mat-icon>{{ bar.activo ? 'block' : 'check_circle' }}</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (modalAbierto()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal fade-in" (click)="$event.stopPropagation()" id="modal-bar">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ editando() ? 'Editar bar' : 'Nuevo bar' }}</h2>
+        <button class="btn-action" id="btn-cerrar-modal" (click)="cerrarModal()"><mat-icon>close</mat-icon></button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label">Código *</label>
+          <input class="form-input" id="bar-codigo" placeholder="BAR001"
+                 [value]="form().codigo" (input)="setField('codigo', $any($event.target).value)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nombre *</label>
+          <input class="form-input" id="bar-nombre" placeholder="Bar El Ejemplo"
+                 [value]="form().nombre" (input)="setField('nombre', $any($event.target).value)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dirección</label>
+          <input class="form-input" id="bar-direccion" placeholder="Calle Mayor 1"
+                 [value]="form().direccion || ''" (input)="setField('direccion', $any($event.target).value)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input class="form-input" id="bar-telefono" placeholder="600123456"
+                 [value]="form().telefono || ''" (input)="setField('telefono', $any($event.target).value)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas</label>
+          <textarea class="form-textarea" id="bar-notas" placeholder="Observaciones..."
+                    [value]="form().notas || ''" (input)="setField('notas', $any($event.target).value)"></textarea>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-cancel" id="btn-cancelar" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-primary" id="btn-guardar-bar"
+                [disabled]="!form().codigo || !form().nombre || guardando()"
+                (click)="guardar()">
+          {{ guardando() ? 'Guardando...' : (editando() ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,128 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="page-header__left">
+      <h1 class="page-title">Usuarios</h1>
+      <span class="page-count">{{ usuariosFiltrados().length }}</span>
+    </div>
+    <div class="page-header__actions">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" id="usuarios-search" placeholder="Buscar..."
+               [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+      </div>
+      <button class="btn-primary" id="btn-nuevo-usuario" (click)="abrirCrear()">
+        <mat-icon>person_add</mat-icon> Nuevo usuario
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton skeleton-table" style="height: 160px;"></div>
+  } @else if (usuariosFiltrados().length === 0) {
+    <div class="empty-state"><mat-icon>people</mat-icon><h3>No hay usuarios</h3></div>
+  } @else {
+    <div class="admin-table-wrap fade-in">
+      <table class="admin-table">
+        <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+          @for (u of usuariosFiltrados(); track u.id) {
+            <tr [class.inactivo]="!u.activo">
+              <td>
+                <div class="usuario-cell">
+                  <div class="avatar">{{ u.nombre.charAt(0) }}</div>
+                  {{ u.nombre }}
+                </div>
+              </td>
+              <td><code>{{ u.username }}</code></td>
+              <td><span class="badge-rol">{{ rolLabel(u.rol) }}</span></td>
+              <td><span [class]="u.activo ? 'badge-activo' : 'badge-inactivo'">{{ u.activo ? 'Activo' : 'Inactivo' }}</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-action" [id]="'btn-edit-user-' + u.id" (click)="abrirEditar(u)" title="Editar"><mat-icon>edit</mat-icon></button>
+                  <button class="btn-action" [id]="'btn-pwd-user-' + u.id" (click)="abrirPassword(u)" title="Cambiar contraseña"><mat-icon>key</mat-icon></button>
+                  <button class="btn-action" [class]="u.activo ? 'btn-action--danger' : 'btn-action--success'"
+                          [id]="'btn-toggle-user-' + u.id" (click)="toggleActivo(u)" [title]="u.activo ? 'Desactivar' : 'Activar'">
+                    <mat-icon>{{ u.activo ? 'block' : 'check_circle' }}</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Modal usuario -->
+@if (modalAbierto()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal fade-in" (click)="$event.stopPropagation()" id="modal-usuario">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ editando() ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+        <button class="btn-action" (click)="cerrarModal()"><mat-icon>close</mat-icon></button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label">Nombre *</label>
+          <input class="form-input" id="user-nombre" placeholder="María García"
+                 [value]="form().nombre" (input)="setField('nombre', $any($event.target).value)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Usuario *</label>
+          <input class="form-input" id="user-username" placeholder="maria" [disabled]="!!editando()"
+                 [value]="form().username" (input)="setField('username', $any($event.target).value)" />
+        </div>
+        @if (!editando()) {
+          <div class="form-group">
+            <label class="form-label">Contraseña *</label>
+            <input class="form-input" id="user-password" type="password" placeholder="Mínimo 4 caracteres"
+                   [value]="form().password" (input)="setField('password', $any($event.target).value)" />
+          </div>
+        }
+        <div class="form-group">
+          <label class="form-label">Rol *</label>
+          <select class="form-select" id="user-rol"
+                  [value]="form().rol" (change)="setField('rol', $any($event.target).value)">
+            @for (r of roles; track r) {
+              <option [value]="r">{{ rolLabel(r) }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-primary" id="btn-guardar-usuario"
+                [disabled]="!form().nombre || !form().username || (!editando() && !form().password) || guardando()"
+                (click)="guardar()">
+          {{ guardando() ? 'Guardando...' : (editando() ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal contraseña -->
+@if (modalPassword()) {
+  <div class="modal-overlay" (click)="cerrarPassword()">
+    <div class="modal fade-in" (click)="$event.stopPropagation()" id="modal-password">
+      <div class="modal__header">
+        <h2 class="modal__title">Cambiar contraseña</h2>
+        <button class="btn-action" (click)="cerrarPassword()"><mat-icon>close</mat-icon></button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label">Nueva contraseña *</label>
+          <input class="form-input" id="nueva-password" type="password" placeholder="Mínimo 4 caracteres"
+                 [value]="nuevaPassword()" (input)="nuevaPassword.set($any($event.target).value)" />
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-cancel" (click)="cerrarPassword()">Cancelar</button>
+        <button class="btn-primary" id="btn-guardar-pwd"
+                [disabled]="nuevaPassword().length < 4"
+                (click)="guardarPassword()">Cambiar</button>
+      </div>
+    </div>
+  </div>
+}
