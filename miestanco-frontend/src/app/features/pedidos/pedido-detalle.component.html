@@ -1,0 +1,152 @@
+@if (loading()) {
+  <div class="skeleton" style="height: 400px; border-radius: 12px;"></div>
+} @else if (pedido()) {
+  <div class="detalle fade-in">
+
+    <!-- Header -->
+    <div class="detalle-header">
+      <a routerLink="/pedidos" class="btn-back" id="btn-volver">
+        <mat-icon>arrow_back</mat-icon> Volver
+      </a>
+      <div class="detalle-header__info">
+        <h1 class="page-title">Pedido #{{ pedido()!.id }}</h1>
+        <span class="badge badge--{{ pedido()!.estado.toLowerCase().replace('_','-') }}">
+          {{ estadoLabel(pedido()!.estado) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Barra de progreso general -->
+    <div class="progreso-section">
+      <div class="progreso-header">
+        <span>Preparación</span>
+        <span class="progreso-pct">{{ progreso() }}%</span>
+      </div>
+      <div class="progreso-track">
+        <div class="progreso-fill" [style.width.%]="progreso()"></div>
+      </div>
+    </div>
+
+    <div class="detalle-body">
+      <!-- Info general -->
+      <div class="info-card card">
+        <div class="info-row">
+          <mat-icon>store</mat-icon>
+          <div>
+            <div class="info-label">Bar</div>
+            <div class="info-value">{{ pedido()!.maquina.bar.nombre }}</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <mat-icon>point_of_sale</mat-icon>
+          <div>
+            <div class="info-label">Máquina</div>
+            <div class="info-value">{{ pedido()!.maquina.nombre }}</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <div class="info-label">Creado</div>
+            <div class="info-value">{{ pedido()!.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</div>
+          </div>
+        </div>
+        @if (pedido()!.notas) {
+          <div class="info-row">
+            <mat-icon>notes</mat-icon>
+            <div>
+              <div class="info-label">Notas</div>
+              <div class="info-value">{{ pedido()!.notas }}</div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Productos -->
+      @if (pedido()!.lineasProducto.length > 0) {
+        <div class="items-section card">
+          <h3 class="section-title"><mat-icon>inventory_2</mat-icon> Productos</h3>
+          <div class="items-list">
+            @for (linea of pedido()!.lineasProducto; track linea.id) {
+              <div class="item-row" [class.item-row--done]="linea.preparada"
+                   [id]="'item-prod-' + linea.id">
+                <label class="checkbox-wrap">
+                  <input type="checkbox" [checked]="linea.preparada"
+                         (change)="marcarProducto(linea, $any($event.target).checked)" />
+                  <span class="checkmark"></span>
+                </label>
+                <div class="item-info">
+                  <span class="item-nombre">{{ linea.producto.nombre }}</span>
+                  <span class="item-marca">{{ linea.producto.marca }}</span>
+                </div>
+                <div class="item-right">
+                  <span class="item-cantidad">x{{ linea.cantidad }}</span>
+                  <span class="item-precio">{{ (linea.precioUnitario * linea.cantidad) | number:'1.2-2' }}€</span>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="items-total">
+            Total productos: <strong>{{ totalProductos() | number:'1.2-2' }}€</strong>
+          </div>
+        </div>
+      }
+
+      <!-- Monedas -->
+      @if (pedido()!.lineasMoneda.length > 0) {
+        <div class="items-section card">
+          <h3 class="section-title"><mat-icon>paid</mat-icon> Monedas</h3>
+          <div class="items-list">
+            @for (linea of pedido()!.lineasMoneda; track linea.id) {
+              <div class="item-row" [class.item-row--done]="linea.preparada"
+                   [id]="'item-moneda-' + linea.id">
+                <label class="checkbox-wrap">
+                  <input type="checkbox" [checked]="linea.preparada"
+                         (change)="marcarMoneda(linea, $any($event.target).checked)" />
+                  <span class="checkmark"></span>
+                </label>
+                <div class="item-info">
+                  <span class="item-nombre">{{ linea.moneda.denominacion }}</span>
+                </div>
+                <div class="item-right">
+                  <span class="item-cantidad">x{{ linea.cantidad }}</span>
+                  <span class="item-precio">
+                    {{ (linea.moneda.valorCentimos * linea.cantidad / 100) | number:'1.2-2' }}€
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Acciones de estado -->
+    @if (pedido()!.estado !== EstadoPedido.ENTREGADO && pedido()!.estado !== EstadoPedido.CANCELADO) {
+      <div class="detalle-actions">
+        @if (pedido()!.estado === EstadoPedido.PENDIENTE) {
+          <button class="btn-primary" id="btn-iniciar" [disabled]="guardando()"
+                  (click)="cambiarEstado(EstadoPedido.EN_PREPARACION)">
+            <mat-icon>play_arrow</mat-icon> Iniciar preparación
+          </button>
+        }
+        @if (pedido()!.estado === EstadoPedido.EN_PREPARACION) {
+          <button class="btn-primary" id="btn-preparado" [disabled]="guardando() || !todoPreparado()"
+                  (click)="cambiarEstado(EstadoPedido.PREPARADO)"
+                  [title]="!todoPreparado() ? 'Marca todos los ítems primero' : ''">
+            <mat-icon>check_circle</mat-icon> Marcar como preparado
+          </button>
+          @if (!todoPreparado()) {
+            <span class="hint">Marca todos los ítems para continuar</span>
+          }
+        }
+        @if (pedido()!.estado === EstadoPedido.PREPARADO && isAdmin()) {
+          <button class="btn-primary" id="btn-entregar" [disabled]="guardando()"
+                  (click)="cambiarEstado(EstadoPedido.ENTREGADO)">
+            <mat-icon>local_shipping</mat-icon> Marcar como entregado
+          </button>
+        }
+      </div>
+    }
+  </div>
+}

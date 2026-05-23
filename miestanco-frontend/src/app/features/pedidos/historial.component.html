@@ -1,0 +1,63 @@
+<div class="page-header">
+  <div class="page-header__left">
+    <h1 class="page-title">Historial</h1>
+    <span class="page-count">{{ pedidosFiltrados().length }} resultados</span>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="filtros-bar card">
+  <div class="search-box">
+    <mat-icon>search</mat-icon>
+    <input type="text" id="historial-search" placeholder="Buscar bar, máquina, #..."
+           [value]="filtroBusqueda()" (input)="filtroBusqueda.set($any($event.target).value)" />
+  </div>
+
+  <select id="historial-estado" class="filtro-select"
+          [value]="filtroEstado()"
+          (change)="filtroEstado.set($any($event.target).value); cargar()">
+    <option value="">Todos los estados</option>
+    @for (e of estados; track e.value) {
+      <option [value]="e.value">{{ e.label }}</option>
+    }
+  </select>
+
+  <button class="btn-icon" id="btn-filtrar" (click)="cargar()" title="Aplicar filtros">
+    <mat-icon>filter_list</mat-icon>
+  </button>
+</div>
+
+<!-- Lista -->
+@if (loading()) {
+  <div class="skeleton-grid" style="margin-top: 1rem;">
+    @for (i of [1,2,3]; track i) {
+      <div class="skeleton" style="height: 80px; border-radius: 8px;"></div>
+    }
+  </div>
+} @else if (pedidosFiltrados().length === 0) {
+  <div class="empty-state fade-in">
+    <mat-icon>history</mat-icon>
+    <h3>Sin resultados</h3>
+    <p>Prueba con otros filtros</p>
+  </div>
+} @else {
+  <div class="historial-list fade-in">
+    @for (pedido of pedidosFiltrados(); track pedido.id) {
+      <a [routerLink]="['/pedidos', pedido.id]" class="historial-row"
+         [id]="'hist-' + pedido.id">
+        <div class="historial-row__id">#{{ pedido.id }}</div>
+        <div class="historial-row__bar">
+          <strong>{{ pedido.maquina.bar.nombre }}</strong>
+          <span>{{ pedido.maquina.nombre }}</span>
+        </div>
+        <span class="badge badge--{{ pedido.estado.toLowerCase().replace('_','-') }}">
+          {{ estadoLabel(pedido.estado) }}
+        </span>
+        <div class="historial-row__fecha">
+          {{ pedido.fechaCreacion | date:'dd/MM/yy HH:mm' }}
+        </div>
+        <mat-icon class="historial-row__arrow">chevron_right</mat-icon>
+      </a>
+    }
+  </div>
+}

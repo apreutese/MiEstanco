@@ -18,6 +18,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pedidos/pedidos-list.component').then(m => m.PedidosListComponent)
       },
       {
+        path: 'pedidos/nuevo',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/pedidos/crear-pedido.component').then(m => m.CrearPedidoComponent)
+      },
+      {
         path: 'pedidos/:id',
         loadComponent: () => import('./features/pedidos/pedido-detalle.component').then(m => m.PedidoDetalleComponent)
       },

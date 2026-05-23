@@ -1,0 +1,123 @@
+<div class="page-header">
+  <div class="page-header__left">
+    <h1 class="page-title">Pedidos activos</h1>
+    <span class="page-count">{{ pedidosFiltrados().length }} pedidos</span>
+  </div>
+  <div class="page-header__actions">
+    <!-- Buscador -->
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input type="text" id="pedidos-search" placeholder="Buscar bar, máquina, #..."
+             [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+    </div>
+
+    @if (isAdmin()) {
+      <a [routerLink]="['/pedidos', 'nuevo']" id="btn-nuevo-pedido" class="btn-primary">
+        <mat-icon>add</mat-icon> Nuevo pedido
+      </a>
+    }
+    <button class="btn-icon" id="btn-refresh" (click)="cargar()" title="Actualizar">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="skeleton-grid">
+    @for (i of [1,2,3,4]; track i) {
+      <div class="skeleton" style="height: 140px; border-radius: 12px;"></div>
+    }
+  </div>
+} @else if (pedidosFiltrados().length === 0) {
+  <div class="empty-state fade-in">
+    <mat-icon>receipt_long</mat-icon>
+    <h3>No hay pedidos activos</h3>
+    <p>Crea un nuevo pedido para empezar</p>
+  </div>
+} @else {
+  <div class="pedidos-grid fade-in">
+    @for (pedido of pedidosFiltrados(); track pedido.id) {
+      <div class="pedido-card" [class]="'pedido-card--' + pedido.estado.toLowerCase().replace('_', '-')">
+
+        <!-- Header de la card -->
+        <div class="pedido-card__header">
+          <div class="pedido-card__id">#{{ pedido.id }}</div>
+          <span class="badge badge--{{ pedido.estado.toLowerCase().replace('_', '-') }}">
+            {{ estadoLabel(pedido.estado) }}
+          </span>
+        </div>
+
+        <!-- Info del bar/máquina -->
+        <div class="pedido-card__bar">
+          <mat-icon>store</mat-icon>
+          <strong>{{ pedido.maquina.bar.nombre }}</strong>
+        </div>
+        <div class="pedido-card__maquina">
+          <mat-icon>point_of_sale</mat-icon>
+          {{ pedido.maquina.nombre }}
+        </div>
+
+        <!-- Resumen items -->
+        <div class="pedido-card__items">
+          @if (pedido.lineasProducto.length > 0) {
+            <span class="items-chip">
+              <mat-icon>inventory_2</mat-icon>
+              {{ pedido.lineasProducto.length }} producto{{ pedido.lineasProducto.length !== 1 ? 's' : '' }}
+            </span>
+          }
+          @if (pedido.lineasMoneda.length > 0) {
+            <span class="items-chip">
+              <mat-icon>paid</mat-icon>
+              {{ pedido.lineasMoneda.length }} moneda{{ pedido.lineasMoneda.length !== 1 ? 's' : '' }}
+            </span>
+          }
+        </div>
+
+        <!-- Progreso de preparación -->
+        @if (pedido.estado === 'EN_PREPARACION') {
+          @let preparados = pedido.lineasProducto.filter(l => l.preparada).length + pedido.lineasMoneda.filter(l => l.preparada).length;
+          @let total = pedido.lineasProducto.length + pedido.lineasMoneda.length;
+          <div class="pedido-progress">
+            <div class="pedido-progress__bar" [style.width.%]="total > 0 ? (preparados / total * 100) : 0"></div>
+          </div>
+          <div class="pedido-progress__label">{{ preparados }}/{{ total }} preparado{{ total !== 1 ? 's' : '' }}</div>
+        }
+
+        <!-- Fecha -->
+        <div class="pedido-card__fecha">
+          <mat-icon>schedule</mat-icon>
+          {{ pedido.fechaCreacion | date:'dd/MM HH:mm' }}
+        </div>
+
+        <!-- Acciones -->
+        <div class="pedido-card__actions">
+          <a [routerLink]="['/pedidos', pedido.id]" class="btn-sm btn-sm--outline" id="btn-ver-{{ pedido.id }}">
+            <mat-icon>visibility</mat-icon> Ver
+          </a>
+
+          @if (siguienteEstado(pedido.estado)) {
+            <button class="btn-sm btn-sm--primary"
+                    id="btn-estado-{{ pedido.id }}"
+                    (click)="cambiarEstado(pedido, siguienteEstado(pedido.estado)!)">
+              {{ accionLabel(pedido.estado) }}
+            </button>
+          }
+
+          @if (isAdmin()) {
+            <button mat-icon-button [matMenuTriggerFor]="menu" id="btn-menu-{{ pedido.id }}" class="btn-menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu>
+              <button mat-menu-item [routerLink]="['/pedidos', pedido.id]">
+                <mat-icon>edit</mat-icon> Editar
+              </button>
+              <button mat-menu-item (click)="cancelar(pedido)" class="menu-danger">
+                <mat-icon>cancel</mat-icon> Cancelar
+              </button>
+            </mat-menu>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
