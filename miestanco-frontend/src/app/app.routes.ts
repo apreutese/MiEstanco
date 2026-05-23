@@ -19,7 +19,6 @@ export const routes: Routes = [
       },
       {
         path: 'pedidos/nuevo',
-        canActivate: [adminGuard],
         loadComponent: () => import('./features/pedidos/crear-pedido.component').then(m => m.CrearPedidoComponent)
       },
       {
@@ -49,6 +48,10 @@ export const routes: Routes = [
         path: 'usuarios',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/usuarios/usuarios-list.component').then(m => m.UsuariosListComponent)
+      },
+      {
+        path: 'perfil',
+        loadComponent: () => import('./features/perfil/perfil.component').then(m => m.PerfilComponent)
       },
     ]
   },

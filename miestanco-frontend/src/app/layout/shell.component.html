@@ -1,56 +1,117 @@
-<mat-sidenav-container class="shell-container">
+<!-- ═══════════════════════════════════════
+     SHELL — Layout principal MiEstanco
+     Desktop: sidebar fijo izquierda
+     Mobile:  bottom tab bar
+═══════════════════════════════════════ -->
+<div class="shell" [class.sidebar-collapsed]="sidebarCollapsed()">
 
-  <!-- Sidebar -->
-  <mat-sidenav #sidenav [opened]="sidenavOpen()" mode="side" class="shell-nav">
-    <!-- Logo -->
-    <div class="nav-brand">
-      <span class="nav-brand__icon">🏪</span>
-      <span class="nav-brand__name">MiEstanco</span>
+  <!-- ── SIDEBAR (escritorio) ──────────────── -->
+  <aside class="sidebar">
+
+    <!-- Logo + toggle collapse -->
+    <div class="sidebar__brand">
+      <span class="brand-icon">🏪</span>
+      <span class="brand-name">MiEstanco</span>
+      <button class="sidebar__collapse-btn" (click)="toggleSidebar()" title="Colapsar menú">
+        <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
     </div>
 
-    <!-- Menú -->
-    <mat-nav-list class="nav-list">
-      @for (item of visibleNav(); track item.route) {
-        <a mat-list-item
+    <!-- Nav items -->
+    <nav class="sidebar__nav">
+      @for (item of sidebarNav(); track item.route) {
+        <a class="sidebar__item"
            [routerLink]="item.route"
-           routerLinkActive="nav-item--active"
-           class="nav-item"
-           [id]="'nav-' + item.route.slice(1)">
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.label }}</span>
+           routerLinkActive="sidebar__item--active"
+           [id]="'nav-' + item.route.slice(1)"
+           [title]="sidebarCollapsed() ? item.label : ''">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span class="sidebar__label">{{ item.label }}</span>
         </a>
       }
-    </mat-nav-list>
+    </nav>
 
-    <!-- Usuario y logout -->
-    <div class="nav-footer">
-      <div class="nav-user">
-        <div class="nav-user__avatar">{{ usuario()?.nombre?.charAt(0) }}</div>
-        <div class="nav-user__info">
-          <span class="nav-user__name">{{ usuario()?.nombre }}</span>
-          <span class="nav-user__role">{{ usuario()?.rol === 'ADMIN' ? 'Administrador' : 'Trabajadora' }}</span>
+    <!-- Footer: usuario + theme + logout -->
+    <div class="sidebar__footer">
+      <a class="sidebar__item" routerLink="/perfil" routerLinkActive="sidebar__item--active" id="nav-perfil"
+         [title]="sidebarCollapsed() ? 'Perfil' : ''">
+        <div class="avatar">{{ avatarLetter() }}</div>
+        <div class="sidebar__user-info">
+          <span class="sidebar__username">{{ usuario()?.nombre }}</span>
+          <span class="sidebar__role">{{ rolLabel() }}</span>
         </div>
-      </div>
-      <button mat-icon-button id="btn-logout" (click)="logout()"
-              matTooltip="Cerrar sesión" class="nav-logout">
+      </a>
+      <button class="sidebar__logout" (click)="logout()" id="btn-logout" title="Cerrar sesión">
         <mat-icon>logout</mat-icon>
       </button>
     </div>
-  </mat-sidenav>
+  </aside>
 
-  <!-- Contenido principal -->
-  <mat-sidenav-content class="shell-content">
-    <!-- Topbar móvil -->
-    <mat-toolbar class="shell-toolbar">
-      <button mat-icon-button id="btn-toggle-nav" (click)="sidenav.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="flex-1"></span>
-    </mat-toolbar>
+  <!-- ── CONTENIDO PRINCIPAL ───────────────── -->
+  <main class="shell-main">
+    <router-outlet />
+  </main>
 
-    <main class="shell-main">
-      <router-outlet />
-    </main>
-  </mat-sidenav-content>
+  <!-- ── BOTTOM TAB BAR (móvil) ───────────── -->
+  <nav class="bottom-bar">
 
-</mat-sidenav-container>
+    <!-- Pedidos -->
+    <a class="bottom-bar__tab" routerLink="/pedidos" routerLinkActive="bottom-bar__tab--active" id="btn-nav-pedidos">
+      <mat-icon>receipt_long</mat-icon>
+      <span>Pedidos</span>
+    </a>
+
+    <!-- Historial -->
+    <a class="bottom-bar__tab" routerLink="/historial" routerLinkActive="bottom-bar__tab--active" id="btn-nav-historial">
+      <mat-icon>history</mat-icon>
+      <span>Historial</span>
+    </a>
+
+    <!-- Botón central NUEVO PEDIDO -->
+    <button class="bottom-bar__fab" (click)="goNuevoPedido()" id="btn-nuevo-pedido-fab">
+      <mat-icon>add</mat-icon>
+    </button>
+
+    <!-- Admin (solo admin) -->
+    @if (isAdmin()) {
+      <div class="bottom-bar__tab bottom-bar__tab--admin"
+           (click)="$event.stopPropagation(); toggleAdminMenu()"
+           [class.bottom-bar__tab--active]="adminMenuOpen()"
+           id="btn-nav-admin">
+        <mat-icon>grid_view</mat-icon>
+        <span>Admin</span>
+      </div>
+    } @else {
+      <!-- Perfil en lugar de admin para trabajadores -->
+      <a class="bottom-bar__tab" routerLink="/perfil" routerLinkActive="bottom-bar__tab--active" id="btn-nav-perfil">
+        <mat-icon>person</mat-icon>
+        <span>Perfil</span>
+      </a>
+    }
+
+    <!-- Perfil (siempre visible para admin también) -->
+    @if (isAdmin()) {
+      <a class="bottom-bar__tab" routerLink="/perfil" routerLinkActive="bottom-bar__tab--active" id="btn-nav-perfil">
+        <mat-icon>person</mat-icon>
+        <span>Perfil</span>
+      </a>
+    }
+
+    <!-- Submenú admin (desliza hacia arriba) -->
+    @if (isAdmin() && adminMenuOpen()) {
+      <div class="admin-popup fade-in" (click)="$event.stopPropagation()">
+        <div class="admin-popup__title">Administración</div>
+        @for (item of adminSubNav(); track item.route) {
+          <a class="admin-popup__item"
+             [routerLink]="item.route"
+             routerLinkActive="admin-popup__item--active"
+             (click)="closeAdminMenu()">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      </div>
+    }
+  </nav>
+
+</div>
