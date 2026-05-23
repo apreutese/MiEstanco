@@ -55,9 +55,16 @@ export class CrearPedidoComponent implements OnInit {
     this.barSeleccionadoId.set(barId);
     this.maquinas.set([]);
     this.maquinaSeleccionada.set(null);
+    this.maquinaSeleccionadaId.set('');
     this.limpiarLineas();
     if (barId) {
-      this.svc.maquinasPorBar(+barId).subscribe(m => this.maquinas.set(m));
+      this.svc.maquinasPorBar(+barId).subscribe(m => {
+        this.maquinas.set(m);
+        // Auto-seleccionar la primera máquina si solo hay una o si hay alguna
+        if (m.length > 0) {
+          this.onMaquinaChange(m[0].id);
+        }
+      });
     }
   }
 
