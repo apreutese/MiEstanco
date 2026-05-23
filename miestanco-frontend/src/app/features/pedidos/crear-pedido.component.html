@@ -1,17 +1,35 @@
-<div class="page-header">
-  <a routerLink="/pedidos" class="btn-back" id="btn-volver">
-    <mat-icon>arrow_back</mat-icon> Volver
-  </a>
-  <h1 class="page-title">Nuevo pedido</h1>
-</div>
+<div class="cp-page">
 
-<div class="form-grid">
-  <!-- Paso 1: Selección de bar y máquina -->
-  <div class="card form-section">
-    <h3 class="section-title"><mat-icon>store</mat-icon> Destino</h3>
+  <!-- Header fijo con volver y título -->
+  <div class="cp-header">
+    <a routerLink="/pedidos" class="cp-back" id="btn-volver">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <h1 class="cp-title">Nuevo pedido</h1>
+    @if (maquinaSeleccionada()) {
+      <button class="cp-repetir" id="btn-repetir-ultimo" (click)="repetirUltimo()" title="Repetir último">
+        <mat-icon>replay</mat-icon>
+      </button>
+    }
+  </div>
 
-    <div class="form-row">
-      <label class="form-label">Bar *</label>
+  <!-- Selección de destino -->
+  <div class="cp-section">
+    <p class="cp-section-label">Destino</p>
+
+    <!-- Selector de bar: chips horizontales -->
+    @if (bares().length <= 6) {
+      <div class="cp-chip-list">
+        @for (bar of bares(); track bar.id) {
+          <button class="cp-chip"
+                  [class.cp-chip--active]="barSeleccionadoId() === bar.id"
+                  [id]="'chip-bar-' + bar.id"
+                  (click)="onBarChange(bar.id)">
+            {{ bar.nombre }}
+          </button>
+        }
+      </div>
+    } @else {
       <select id="sel-bar" class="form-select"
               [value]="barSeleccionadoId()"
               (change)="onBarChange($any($event.target).value ? +$any($event.target).value : '')">
@@ -20,101 +38,133 @@
           <option [value]="bar.id">{{ bar.nombre }}</option>
         }
       </select>
-    </div>
-
-    @if (maquinas().length > 0) {
-      <div class="form-row">
-        <label class="form-label">Máquina *</label>
-        <select id="sel-maquina" class="form-select"
-                [value]="maquinaSeleccionadaId()"
-                (change)="onMaquinaChange($any($event.target).value ? +$any($event.target).value : '')">
-          <option value="">— Selecciona una máquina —</option>
-          @for (m of maquinas(); track m.id) {
-            <option [value]="m.id">{{ m.nombre }}</option>
-          }
-        </select>
-      </div>
     }
 
-    @if (maquinaSeleccionada()) {
-      <button class="btn-repetir" id="btn-repetir-ultimo" (click)="repetirUltimo()">
-        <mat-icon>replay</mat-icon> Repetir último pedido
-      </button>
+    <!-- Selector de máquina -->
+    @if (maquinas().length > 0) {
+      <div class="cp-chip-list" style="margin-top: .6rem">
+        @for (m of maquinas(); track m.id) {
+          <button class="cp-chip"
+                  [class.cp-chip--active]="maquinaSeleccionadaId() === m.id"
+                  [id]="'chip-maq-' + m.id"
+                  (click)="onMaquinaChange(m.id)">
+            <mat-icon>videogame_asset</mat-icon>
+            {{ m.nombre }}
+          </button>
+        }
+      </div>
     }
   </div>
 
-  @if (maquinaSeleccionada()) {
-    <!-- Productos -->
-    @if (lineasProducto().length > 0) {
-      <div class="card form-section fade-in">
-        <h3 class="section-title"><mat-icon>inventory_2</mat-icon> Productos</h3>
-        <div class="items-list">
-          @for (linea of lineasProducto(); track linea.producto.id; let i = $index) {
-            <div class="item-row" [class.item-row--active]="linea.cantidad > 0">
-              <div class="item-info">
-                <span class="item-nombre">{{ linea.producto.nombre }}</span>
-                <span class="item-meta">{{ linea.producto.marca }} · {{ linea.producto.precio | number:'1.2-2' }}€</span>
-              </div>
-              <div class="item-cantidad-ctrl">
-                <button class="qty-btn" (click)="setCantidadProducto(i, linea.cantidad - 1)" [id]="'btn-menos-prod-' + i">-</button>
-                <input type="number" class="qty-input" min="0"
-                       [value]="linea.cantidad"
-                       (change)="setCantidadProducto(i, +$any($event.target).value)"
-                       [id]="'qty-prod-' + i" />
-                <button class="qty-btn" (click)="setCantidadProducto(i, linea.cantidad + 1)" [id]="'btn-mas-prod-' + i">+</button>
-              </div>
-              @if (linea.cantidad > 0) {
-                <span class="item-subtotal">{{ (linea.producto.precio * linea.cantidad) | number:'1.2-2' }}€</span>
-              }
+  <!-- Productos: tarjetas tipo Glovo -->
+  @if (maquinaSeleccionada() && lineasProducto().length > 0) {
+    <div class="cp-section fade-in">
+      <p class="cp-section-label">Productos</p>
+      <div class="cp-items">
+        @for (linea of lineasProducto(); track linea.producto.id; let i = $index) {
+          <div class="cp-item" [class.cp-item--active]="linea.cantidad > 0">
+            <div class="cp-item__info">
+              <span class="cp-item__name">{{ linea.producto.nombre }}</span>
+              <span class="cp-item__sub">{{ linea.producto.marca }} · {{ linea.producto.precio | number:'1.2-2' }}€</span>
             </div>
-          }
-        </div>
-        <div class="items-total">
+            <div class="cp-item__ctrl">
+              <!-- Botón - -->
+              <button class="cp-qty-btn cp-qty-btn--minus"
+                      [disabled]="linea.cantidad === 0"
+                      (click)="setCantidadProducto(i, linea.cantidad - 1)"
+                      [id]="'btn-menos-prod-' + i">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <!-- Cantidad -->
+              <span class="cp-qty-num" [class.cp-qty-num--active]="linea.cantidad > 0">
+                {{ linea.cantidad }}
+              </span>
+              <!-- Botón + -->
+              <button class="cp-qty-btn cp-qty-btn--plus"
+                      (click)="setCantidadProducto(i, linea.cantidad + 1)"
+                      [id]="'btn-mas-prod-' + i">
+                <mat-icon>add</mat-icon>
+              </button>
+              <!-- Botón Cartón (+10) -->
+              <button class="cp-carton-btn"
+                      (click)="setCantidadProducto(i, linea.cantidad + 10)"
+                      [id]="'btn-carton-prod-' + i"
+                      title="Añadir cartón (+10)">
+                +10
+              </button>
+            </div>
+            @if (linea.cantidad > 0) {
+              <div class="cp-item__subtotal">
+                {{ (linea.producto.precio * linea.cantidad) | number:'1.2-2' }}€
+              </div>
+            }
+          </div>
+        }
+      </div>
+      @if (totalProductos() > 0) {
+        <div class="cp-total">
           Total: <strong>{{ totalProductos() | number:'1.2-2' }}€</strong>
         </div>
-      </div>
-    }
+      }
+    </div>
+  }
 
-    <!-- Monedas -->
-    @if (lineasMoneda().length > 0) {
-      <div class="card form-section fade-in">
-        <h3 class="section-title"><mat-icon>paid</mat-icon> Monedas / Cambio</h3>
-        <div class="items-list">
-          @for (linea of lineasMoneda(); track linea.moneda.id; let i = $index) {
-            <div class="item-row" [class.item-row--active]="linea.cantidad > 0">
-              <div class="item-info">
-                <span class="item-nombre">{{ linea.moneda.denominacion }}</span>
-                <span class="item-meta">{{ (linea.moneda.valorCentimos / 100) | number:'1.2-2' }}€/ud</span>
-              </div>
-              <div class="item-cantidad-ctrl">
-                <button class="qty-btn" (click)="setCantidadMoneda(i, linea.cantidad - 1)" [id]="'btn-menos-mon-' + i">-</button>
-                <input type="number" class="qty-input" min="0"
-                       [value]="linea.cantidad"
-                       (change)="setCantidadMoneda(i, +$any($event.target).value)"
-                       [id]="'qty-mon-' + i" />
-                <button class="qty-btn" (click)="setCantidadMoneda(i, linea.cantidad + 1)" [id]="'btn-mas-mon-' + i">+</button>
-              </div>
+  <!-- Monedas -->
+  @if (maquinaSeleccionada() && lineasMoneda().length > 0) {
+    <div class="cp-section fade-in">
+      <p class="cp-section-label">Monedas / Cambio</p>
+      <div class="cp-items cp-items--monedas">
+        @for (linea of lineasMoneda(); track linea.moneda.id; let i = $index) {
+          <div class="cp-item" [class.cp-item--active]="linea.cantidad > 0">
+            <div class="cp-item__info">
+              <span class="cp-item__name">{{ linea.moneda.denominacion }}</span>
+              <span class="cp-item__sub">{{ (linea.moneda.valorCentimos / 100) | number:'1.2-2' }}€/ud</span>
             </div>
-          }
-        </div>
+            <div class="cp-item__ctrl">
+              <button class="cp-qty-btn cp-qty-btn--minus"
+                      [disabled]="linea.cantidad === 0"
+                      (click)="setCantidadMoneda(i, linea.cantidad - 1)"
+                      [id]="'btn-menos-mon-' + i">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="cp-qty-num" [class.cp-qty-num--active]="linea.cantidad > 0">
+                {{ linea.cantidad }}
+              </span>
+              <button class="cp-qty-btn cp-qty-btn--plus"
+                      (click)="setCantidadMoneda(i, linea.cantidad + 1)"
+                      [id]="'btn-mas-mon-' + i">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
       </div>
-    }
+    </div>
+  }
 
-    <!-- Notas -->
-    <div class="card form-section">
-      <h3 class="section-title"><mat-icon>notes</mat-icon> Notas (opcional)</h3>
-      <textarea id="notas-pedido" class="form-textarea" rows="3" placeholder="Añade observaciones..."
+  <!-- Notas -->
+  @if (maquinaSeleccionada()) {
+    <div class="cp-section fade-in">
+      <p class="cp-section-label">Notas (opcional)</p>
+      <textarea id="notas-pedido" class="form-textarea" rows="3"
+                placeholder="Observaciones del pedido..."
                 [value]="notas()" (input)="notas.set($any($event.target).value)"></textarea>
     </div>
+  }
 
-    <!-- Botón guardar -->
-    <div class="form-actions">
-      <button class="btn-primary" id="btn-crear-pedido"
-              [disabled]="!puedeGuardar() || guardando()"
+  <!-- FAB Crear pedido -->
+  @if (puedeGuardar()) {
+    <div class="cp-fab-wrap fade-in">
+      <button class="cp-fab" id="btn-crear-pedido"
+              [disabled]="guardando()"
               (click)="guardar()">
-        @if (guardando()) { Guardando... }
-        @else { <mat-icon>save</mat-icon> Crear pedido }
+        @if (guardando()) {
+          <span class="cp-spinner"></span> Guardando...
+        } @else {
+          <mat-icon>check</mat-icon> Crear pedido
+        }
       </button>
     </div>
   }
+
 </div>
