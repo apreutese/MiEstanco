@@ -96,4 +96,12 @@ public class ProductoController {
         productoService.activar(id);
         return ResponseEntity.ok(ApiResponse.ok("Producto activado", null));
     }
+
+    @DeleteMapping("/admin/limpiar-duplicados")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar productos duplicados por nombre (mantiene el de menor id)")
+    public ResponseEntity<ApiResponse<String>> limpiarDuplicados() {
+        int eliminados = productoService.eliminarDuplicados();
+        return ResponseEntity.ok(ApiResponse.ok("Duplicados eliminados: " + eliminados, null));
+    }
 }

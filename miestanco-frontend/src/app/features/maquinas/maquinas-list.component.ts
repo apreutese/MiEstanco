@@ -1,5 +1,5 @@
 import {
-  Component, signal, computed, inject, OnInit, ChangeDetectionStrategy
+  Component, signal, computed, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,7 @@ export class MaquinasListComponent implements OnInit {
   private prodSvc = inject(ProductoService);
   private apiSvc  = inject(ApiService);
   private snack   = inject(MatSnackBar);
+  private cdr     = inject(ChangeDetectorRef);
 
   maquinas  = signal<Maquina[]>([]);
   bares     = signal<Bar[]>([]);
@@ -52,16 +53,16 @@ export class MaquinasListComponent implements OnInit {
 
   ngOnInit() {
     this.cargar();
-    this.barSvc.listar().subscribe(b => this.bares.set(b.filter(x => x.activo)));
-    this.prodSvc.listar().subscribe(p => this.productos.set(p.filter(x => x.activo)));
-    this.apiSvc.get<Moneda[]>('monedas').subscribe(m => this.monedas.set(m));
+    this.barSvc.listar().subscribe(b => { this.bares.set(b.filter(x => x.activo)); this.cdr.markForCheck(); });
+    this.prodSvc.listar().subscribe(p => { this.productos.set(p.filter(x => x.activo)); this.cdr.markForCheck(); });
+    this.apiSvc.get<Moneda[]>('monedas').subscribe(m => { this.monedas.set(m); this.cdr.markForCheck(); });
   }
 
   cargar() {
     this.loading.set(true);
     this.svc.listar().subscribe({
-      next: m => { this.maquinas.set(m); this.loading.set(false); },
-      error: () => this.loading.set(false)
+      next: m => { this.maquinas.set(m); this.loading.set(false); this.cdr.markForCheck(); },
+      error: () => { this.loading.set(false); this.cdr.markForCheck(); }
     });
   }
 
