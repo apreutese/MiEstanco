@@ -1,0 +1,39 @@
+# === Skills (no se sube al repo) ===
+.skills/
+
+# === Backend (Spring Boot / Java) ===
+miestanco-backend/target/
+miestanco-backend/*.jar
+miestanco-backend/*.war
+miestanco-backend/.mvn/wrapper/maven-wrapper.jar
+miestanco-backend/.settings/
+miestanco-backend/.project
+miestanco-backend/.classpath
+miestanco-backend/bin/
+
+# === Frontend (Angular) ===
+miestanco-frontend/node_modules/
+miestanco-frontend/dist/
+miestanco-frontend/.angular/
+miestanco-frontend/.sass-cache/
+
+# === IDEs ===
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Logs ===
+*.log
+npm-debug.log*
+
+# === Env ===
+.env
+.env.local
