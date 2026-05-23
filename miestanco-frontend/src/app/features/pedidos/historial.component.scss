@@ -1,19 +1,55 @@
-// historial.component.scss
+// historial.component.scss — v3 tokens, mobile-first
 
-.filtros-bar {
-  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
-  margin-bottom: 1rem;
+// ── FILTROS ──────────────────────────────────────────────────
+.filtros-bar { margin-bottom: 1rem; }
+
+.filtros-row {
+  display: flex; flex-direction: column; gap: .6rem;
+
+  @media (min-width: 480px) {
+    flex-direction: row; align-items: center; gap: .75rem;
+  }
 }
-.filtro-select {
-  background: var(--bg); border: 1.5px solid var(--border-2);
+
+// Search ocupa todo el ancho disponible
+.search-box {
+  display: flex; align-items: center; gap: .5rem;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-md); padding: .6rem .9rem;
+  transition: border-color var(--t);
+  &:focus-within { border-color: var(--primary); }
+  mat-icon { color: var(--text-3); font-size: 18px !important; width: 18px !important; height: 18px !important; flex-shrink: 0; }
+  input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-family: var(--font); font-size: .875rem; min-width: 0;
+    &::placeholder { color: var(--text-3); }
+  }
+}
+.filtros-search { flex: 1; input { width: 100%; } }
+
+.filtros-selects {
+  display: flex; align-items: center; gap: .5rem; flex-shrink: 0;
+}
+
+// Select envuelto con icono
+.filtro-select-wrap {
+  display: flex; align-items: center;
+  background: var(--surface); border: 1.5px solid var(--border);
   border-radius: var(--r-md); padding: .5rem .75rem;
-  color: var(--text); font-family: var(--font); font-size: .875rem;
-  cursor: pointer; transition: border-color var(--t); appearance: none;
-  &:focus { outline: none; border-color: var(--primary); }
-  option { background: var(--bg); color: var(--text); }
+  gap: .4rem; transition: border-color var(--t);
+  &:focus-within { border-color: var(--primary); }
+}
+.filtro-icon { color: var(--text-3); font-size: 16px !important; width: 16px !important; height: 16px !important; flex-shrink: 0; }
+
+.filtro-select {
+  background: none; border: none; outline: none;
+  color: var(--text); font-family: var(--font); font-size: .85rem;
+  cursor: pointer; appearance: none; -webkit-appearance: none;
+  option { background: var(--surface); color: var(--text); }
 }
 
-.historial-list { display: flex; flex-direction: column; gap: .4rem; margin-top: 1rem; }
+// ── LISTA ────────────────────────────────────────────────────
+.historial-list { display: flex; flex-direction: column; gap: .4rem; margin-top: .25rem; }
 
 .historial-row {
   display: flex; flex-direction: column; gap: .25rem;
@@ -22,14 +58,15 @@
   border-radius: var(--r-md); text-decoration: none;
   transition: border-color var(--t), box-shadow var(--t);
   &:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+  &:active { background: var(--surface-2); }
 
   // Línea 1: ID + Bar + Badge
   &__top {
     display: flex; align-items: center; gap: .5rem;
   }
   &__id {
-    font-size: .72rem; color: var(--text-3); font-weight: 700;
-    flex-shrink: 0; min-width: 36px;
+    font-size: .7rem; color: var(--text-3); font-weight: 700;
+    flex-shrink: 0; min-width: 34px;
   }
   &__bar {
     flex: 1; font-size: .9rem; font-weight: 700; color: var(--text);
@@ -39,14 +76,14 @@
   // Línea 2: Máquina + Fecha
   &__bottom {
     display: flex; align-items: center; justify-content: space-between;
-    padding-left: 44px; // alinea con el bar (tras el id)
+    padding-left: 42px;
   }
   &__maquina {
     font-size: .78rem; color: var(--text-3); flex: 1;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   &__fecha {
-    font-size: .75rem; color: var(--text-3); white-space: nowrap; flex-shrink: 0;
+    font-size: .73rem; color: var(--text-3); white-space: nowrap; flex-shrink: 0;
   }
 }
 

@@ -123,24 +123,28 @@
 // ── FAB CREAR PEDIDO ─────────────────────────────────────────
 .cp-fab-wrap {
   position: fixed;
-  bottom: calc(var(--nav-h) + var(--safe-bottom) + .75rem);
-  left: var(--sidebar-w, 0); right: 0;
+  bottom: calc(var(--nav-h, 64px) + var(--safe-bottom, 0px) + 1rem);
+  left: 0; right: 0;
   display: flex; justify-content: center;
-  pointer-events: none; z-index: 50;
+  z-index: 200; // por encima del bottom-bar (100)
+  pointer-events: none;
 
-  @media (max-width: 767px) { left: 0; }
+  @media (min-width: 768px) {
+    left: var(--sidebar-w, 220px);
+  }
 }
 .cp-fab {
   display: flex; align-items: center; gap: .6rem;
   background: var(--primary); color: #fff; border: none;
   border-radius: 28px; padding: .9rem 2rem;
   font-family: var(--font); font-size: 1rem; font-weight: 700;
-  box-shadow: 0 6px 20px rgba(0,0,0,.2);
+  box-shadow: 0 6px 24px rgba(204,0,0,.35);
   cursor: pointer; transition: all var(--t); pointer-events: all;
+  -webkit-tap-highlight-color: transparent;
   mat-icon { font-size: 20px !important; width: 20px !important; height: 20px !important; }
   &:hover:not(:disabled) { background: var(--primary-h); transform: translateY(-2px); }
   &:active { transform: scale(.97); }
-  &:disabled { opacity: .5; cursor: not-allowed; }
+  &:disabled { opacity: .5; cursor: not-allowed; pointer-events: none; }
 }
 
 // ── SPINNER ──────────────────────────────────────────────────

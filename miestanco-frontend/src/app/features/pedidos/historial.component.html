@@ -6,25 +6,32 @@
 </div>
 
 <!-- Filtros -->
-<div class="filtros-bar card">
-  <div class="search-box">
-    <mat-icon>search</mat-icon>
-    <input type="text" id="historial-search" placeholder="Buscar bar, máquina, #..."
-           [value]="filtroBusqueda()" (input)="filtroBusqueda.set($any($event.target).value)" />
+<div class="filtros-bar">
+  <div class="filtros-row">
+    <div class="search-box filtros-search">
+      <mat-icon>search</mat-icon>
+      <input type="text" id="historial-search" placeholder="Buscar bar, máquina, #..."
+             [value]="filtroBusqueda()" (input)="filtroBusqueda.set($any($event.target).value)" />
+    </div>
+
+    <div class="filtros-selects">
+      <div class="filtro-select-wrap">
+        <mat-icon class="filtro-icon">filter_list</mat-icon>
+        <select id="historial-estado" class="filtro-select"
+                [value]="filtroEstado()"
+                (change)="filtroEstado.set($any($event.target).value); cargar()">
+          <option value="">Todos los estados</option>
+          @for (e of estados; track e.value) {
+            <option [value]="e.value">{{ e.label }}</option>
+          }
+        </select>
+      </div>
+
+      <button class="btn-icon" id="btn-filtrar" (click)="cargar()" title="Actualizar">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
   </div>
-
-  <select id="historial-estado" class="filtro-select"
-          [value]="filtroEstado()"
-          (change)="filtroEstado.set($any($event.target).value); cargar()">
-    <option value="">Todos los estados</option>
-    @for (e of estados; track e.value) {
-      <option [value]="e.value">{{ e.label }}</option>
-    }
-  </select>
-
-  <button class="btn-icon" id="btn-filtrar" (click)="cargar()" title="Aplicar filtros">
-    <mat-icon>filter_list</mat-icon>
-  </button>
 </div>
 
 <!-- Lista -->
