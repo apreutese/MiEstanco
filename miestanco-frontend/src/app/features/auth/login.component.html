@@ -37,7 +37,7 @@
                  placeholder="••••"
                  [class.field__input--error]="form.get('password')?.invalid && form.get('password')?.touched" />
           <button type="button" class="field__toggle" (click)="togglePass()" tabindex="-1">
-            {{ showPass() ? '🙈' : '👁' }}
+            <mat-icon>{{ showPass() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </div>
         @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
