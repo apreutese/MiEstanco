@@ -1,0 +1,163 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="page-header__left">
+      <h1 class="page-title">Máquinas</h1>
+      <span class="page-count">{{ maquinasFiltradas().length }}</span>
+    </div>
+    <div class="page-header__actions">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" id="maquinas-search" placeholder="Buscar..."
+               [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+      </div>
+      <button class="btn-primary" id="btn-nueva-maquina" (click)="abrirCrear()">
+        <mat-icon>add</mat-icon> Nueva máquina
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton skeleton-table" style="height: 200px;"></div>
+  } @else if (maquinasFiltradas().length === 0) {
+    <div class="empty-state">
+      <mat-icon>point_of_sale</mat-icon>
+      <h3>No hay máquinas</h3><p>Crea la primera</p>
+    </div>
+  } @else {
+    <div class="admin-table-wrap fade-in">
+      <table class="admin-table">
+        <thead><tr>
+          <th>Nombre</th><th>Bar</th><th>Tipo</th><th>Productos</th><th>Monedas</th><th>Estado</th><th>Acciones</th>
+        </tr></thead>
+        <tbody>
+          @for (m of maquinasFiltradas(); track m.id) {
+            <tr [class.inactivo]="!m.activa">
+              <td><strong>{{ m.nombre }}</strong></td>
+              <td>{{ m.bar.nombre }}</td>
+              <td>{{ m.tipo || '—' }}</td>
+              <td>
+                <div class="chip-list">
+                  @for (p of m.productos.slice(0,3); track p.id) {
+                    <span class="chip">{{ p.nombre }}</span>
+                  }
+                  @if (m.productos.length > 3) {
+                    <span class="chip chip--more">+{{ m.productos.length - 3 }}</span>
+                  }
+                </div>
+              </td>
+              <td>
+                <div class="chip-list">
+                  @for (mo of m.monedas; track mo.id) {
+                    <span class="chip chip--moneda">{{ mo.denominacion }}</span>
+                  }
+                </div>
+              </td>
+              <td>
+                <span [class]="m.activa ? 'badge-activo' : 'badge-inactivo'">
+                  {{ m.activa ? 'Activa' : 'Inactiva' }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-action" [id]="'btn-edit-maq-' + m.id" (click)="abrirEditar(m)" title="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="btn-action" [class]="m.activa ? 'btn-action--danger' : 'btn-action--success'"
+                          [id]="'btn-toggle-maq-' + m.id" (click)="toggleActiva(m)"
+                          [title]="m.activa ? 'Desactivar' : 'Activar'">
+                    <mat-icon>{{ m.activa ? 'block' : 'check_circle' }}</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (modal()) {
+  <div class="modal-overlay" (click)="cerrar()">
+    <div class="modal modal--wide fade-in" (click)="$event.stopPropagation()" id="modal-maquina">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ editando() ? 'Editar máquina' : 'Nueva máquina' }}</h2>
+        <button class="btn-action" (click)="cerrar()"><mat-icon>close</mat-icon></button>
+      </div>
+      <div class="modal__body">
+
+        <!-- Fila 1: datos básicos -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            <input class="form-input" id="maq-nombre" placeholder="Máquina Bar El Rincón"
+                   [value]="form().nombre" (input)="setField('nombre', $any($event.target).value)" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo</label>
+            <input class="form-input" id="maq-tipo" placeholder="Tabaco mixta"
+                   [value]="form().tipo" (input)="setField('tipo', $any($event.target).value)" />
+          </div>
+        </div>
+
+        <!-- Bar -->
+        <div class="form-group">
+          <label class="form-label">Bar *</label>
+          <select class="form-select" id="maq-bar"
+                  [value]="form().barId" (change)="setField('barId', +$any($event.target).value)">
+            <option value="">-- Seleccionar bar --</option>
+            @for (b of bares(); track b.id) {
+              <option [value]="b.id">{{ b.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Notas -->
+        <div class="form-group">
+          <label class="form-label">Notas</label>
+          <textarea class="form-textarea" id="maq-notas" placeholder="Observaciones..."
+                    [value]="form().notas" (input)="setField('notas', $any($event.target).value)"></textarea>
+        </div>
+
+        <!-- Productos -->
+        <div class="form-group">
+          <label class="form-label">Productos asignados ({{ productosSeleccionados().size }})</label>
+          <div class="checkbox-grid">
+            @for (p of productos(); track p.id) {
+              <label class="checkbox-item" [class.selected]="isProductoSelected(p.id)">
+                <input type="checkbox" [checked]="isProductoSelected(p.id)"
+                       (change)="toggleProducto(p.id)" />
+                <span>{{ p.nombre }}</span>
+                <small>{{ p.precio }}€</small>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Monedas -->
+        <div class="form-group">
+          <label class="form-label">Monedas aceptadas ({{ monedasSeleccionadas().size }})</label>
+          <div class="checkbox-grid checkbox-grid--monedas">
+            @for (mo of monedas(); track mo.id) {
+              <label class="checkbox-item" [class.selected]="isMonedaSelected(mo.id)">
+                <input type="checkbox" [checked]="isMonedaSelected(mo.id)"
+                       (change)="toggleMoneda(mo.id)" />
+                <span>{{ mo.denominacion }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+      </div>
+      <div class="modal__footer">
+        <button class="btn-cancel" (click)="cerrar()">Cancelar</button>
+        <button class="btn-primary" id="btn-guardar-maquina"
+                [disabled]="!form().nombre || !form().barId || guardando()"
+                (click)="guardar()">
+          {{ guardando() ? 'Guardando...' : (editando() ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
