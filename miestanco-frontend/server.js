@@ -10,11 +10,15 @@ const PORT = process.env.PORT || 4201;
 const DIST = path.join(__dirname, 'dist/miestanco-frontend/browser');
 
 // 1. Proxy de API al backend Spring Boot
-app.use('/api', createProxyMiddleware({
-  target: 'http://localhost:8080',
-  changeOrigin: true,
-  logLevel: 'warn',
-}));
+//    Backend context path = /api → petición /api/auth/login debe llegar como /api/auth/login
+app.use(
+  createProxyMiddleware({
+    pathFilter: '/api',          // solo rutas que empiezan por /api
+    target: 'http://localhost:8080',
+    changeOrigin: true,
+    // No reescribir path → /api/auth/login llega tal cual al backend
+  })
+);
 
 // 2. Archivos estáticos del build de Angular
 app.use(express.static(DIST, {
