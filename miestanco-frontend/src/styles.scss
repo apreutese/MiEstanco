@@ -1,114 +1,104 @@
 @use '@angular/material' as mat;
 
 // ============================================================
-// MiEstanco — Design System v2
-// Themes: Marlboro Red | Marlboro Gold | Tabacos España
+// MiEstanco — Design System v3 (Light themes)
+// Marlboro Red | Marlboro Gold | Tabacos España
 // ============================================================
 
-// ── TIPOGRAFÍA ───────────────────────────────────────────────
-// Inter (index.html) — ya cargada globalmente
-
-// ── TOKENS COMUNES ──────────────────────────────────────────
 :root {
   --font:        'Inter', system-ui, -apple-system, sans-serif;
   --r-sm:        6px;
   --r-md:        10px;
   --r-lg:        16px;
   --r-xl:        24px;
-  --shadow-sm:   0 1px 4px rgba(0,0,0,.25);
-  --shadow-md:   0 4px 16px rgba(0,0,0,.35);
-  --shadow-lg:   0 8px 32px rgba(0,0,0,.45);
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:   0 4px 12px rgba(0,0,0,.12);
+  --shadow-lg:   0 8px 24px rgba(0,0,0,.16);
   --ease:        cubic-bezier(.4,0,.2,1);
   --t:           150ms;
-
-  // Bottom nav safe area (iPhone notch)
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --nav-h:       64px;   // bottom nav height mobile
-  --sidebar-w:   220px;  // sidebar width desktop
+  --nav-h:       64px;
+  --sidebar-w:   220px;
 }
 
-// ── THEME: MARLBORO RED (default) ────────────────────────────
+// ── MARLBORO RED (default) ────────────────────────────────────
+// Blanco puro + rojo Marlboro literalmente
 [data-theme="marlboro-red"], :root {
-  --bg:           #0f0809;
-  --surface:      #1a1112;
-  --surface-2:    #231618;
-  --surface-3:    #2e1c1e;
-  --primary:      #c41e2a;
-  --primary-h:    #a8182b;
-  --primary-dim:  rgba(196,30,42,.15);
-  --accent:       #d4a017;
-  --accent-dim:   rgba(212,160,23,.15);
-  --text:         #f0e8e8;
-  --text-2:       #b09090;
-  --text-3:       #6a5050;
-  --border:       #3a2020;
-  --border-2:     #4a2828;
+  --bg:          #FFFFFF;
+  --surface:     #F7F7F7;
+  --surface-2:   #EFEFEF;
+  --surface-3:   #E5E5E5;
+  --primary:     #CC0000;       // Rojo Marlboro exacto
+  --primary-h:   #AA0000;
+  --primary-dim: rgba(204,0,0,.08);
+  --accent:      #C9973A;       // Dorado
+  --accent-dim:  rgba(201,151,58,.12);
+  --text:        #111111;
+  --text-2:      #555555;
+  --text-3:      #999999;
+  --border:      #E0E0E0;
+  --border-2:    #C8C8C8;
 
-  // Estados
-  --pend:    #f59e0b;  --pend-bg:  rgba(245,158,11,.12);
-  --prep:    #3b82f6;  --prep-bg:  rgba(59,130,246,.12);
-  --listo:   #a855f7;  --listo-bg: rgba(168,85,247,.12);
-  --entrega: #22c55e;  --entrega-bg: rgba(34,197,94,.12);
-  --cancel:  #ef4444;  --cancel-bg:  rgba(239,68,68,.12);
+  --pend:    #D97706;  --pend-bg:  rgba(217,119,6,.1);
+  --prep:    #2563EB;  --prep-bg:  rgba(37,99,235,.1);
+  --listo:   #7C3AED;  --listo-bg: rgba(124,58,237,.1);
+  --entrega: #16A34A;  --entrega-bg: rgba(22,163,74,.1);
+  --cancel:  #DC2626;  --cancel-bg:  rgba(220,38,38,.1);
 }
 
-// ── THEME: MARLBORO GOLD ─────────────────────────────────────
+// ── MARLBORO GOLD ─────────────────────────────────────────────
+// Crema cálido + dorado Marlboro literalmente
 [data-theme="marlboro-gold"] {
-  --bg:           #0d0b06;
-  --surface:      #1a1508;
-  --surface-2:    #231d0c;
-  --surface-3:    #2e2510;
-  --primary:      #c8961a;
-  --primary-h:    #a87a10;
-  --primary-dim:  rgba(200,150,26,.15);
-  --accent:       #c41e2a;
-  --accent-dim:   rgba(196,30,42,.15);
-  --text:         #f5f0e0;
-  --text-2:       #a89070;
-  --text-3:       #6a5840;
-  --border:       #38280a;
-  --border-2:     #4a3410;
+  --bg:          #FEFCF6;
+  --surface:     #FAF5E8;
+  --surface-2:   #F3EACF;
+  --surface-3:   #EAD9B0;
+  --primary:     #C9973A;       // Dorado Marlboro exacto
+  --primary-h:   #A87C28;
+  --primary-dim: rgba(201,151,58,.12);
+  --accent:      #CC0000;       // Rojo como acento
+  --accent-dim:  rgba(204,0,0,.08);
+  --text:        #1E1508;
+  --text-2:      #5A4020;
+  --text-3:      #9A7848;
+  --border:      #E0D0A8;
+  --border-2:    #C8B888;
 
-  --pend:    #f59e0b;  --pend-bg:  rgba(245,158,11,.12);
-  --prep:    #3b82f6;  --prep-bg:  rgba(59,130,246,.12);
-  --listo:   #a855f7;  --listo-bg: rgba(168,85,247,.12);
-  --entrega: #22c55e;  --entrega-bg: rgba(34,197,94,.12);
-  --cancel:  #ef4444;  --cancel-bg:  rgba(239,68,68,.12);
+  --pend:    #D97706;  --pend-bg:  rgba(217,119,6,.1);
+  --prep:    #2563EB;  --prep-bg:  rgba(37,99,235,.1);
+  --listo:   #7C3AED;  --listo-bg: rgba(124,58,237,.1);
+  --entrega: #16A34A;  --entrega-bg: rgba(22,163,74,.1);
+  --cancel:  #DC2626;  --cancel-bg:  rgba(220,38,38,.1);
 }
 
-// ── THEME: TABACOS ESPAÑA ─────────────────────────────────────
+// ── TABACOS ESPAÑA ────────────────────────────────────────────
+// Burdeos del logo + dorado del logo, fondo muy claro
 [data-theme="tabacos"] {
-  --bg:           #2a0810;
-  --surface:      #3d0d18;
-  --surface-2:    #521120;
-  --surface-3:    #6b1528;
-  --primary:      #f0a020;
-  --primary-h:    #d48818;
-  --primary-dim:  rgba(240,160,32,.15);
-  --accent:       #ffd166;
-  --accent-dim:   rgba(255,209,102,.15);
-  --text:         #fff3e0;
-  --text-2:       #c8906a;
-  --text-3:       #8a5040;
-  --border:       #701828;
-  --border-2:     #8a2030;
+  --bg:          #FFF8F9;
+  --surface:     #FFFFFF;
+  --surface-2:   #FCF0F2;
+  --surface-3:   #F5DEE2;
+  --primary:     #8B1528;       // Burdeos logo Tabacos
+  --primary-h:   #6E101F;
+  --primary-dim: rgba(139,21,40,.08);
+  --accent:      #F0A020;       // Dorado logo Tabacos
+  --accent-dim:  rgba(240,160,32,.12);
+  --text:        #180810;
+  --text-2:      #5A2030;
+  --text-3:      #9A6070;
+  --border:      #EED5D9;
+  --border-2:    #D8B0B8;
 
-  --pend:    #f59e0b;  --pend-bg:  rgba(245,158,11,.12);
-  --prep:    #60a5fa;  --prep-bg:  rgba(96,165,250,.12);
-  --listo:   #c084fc;  --listo-bg: rgba(192,132,252,.12);
-  --entrega: #4ade80;  --entrega-bg: rgba(74,222,128,.12);
-  --cancel:  #f87171;  --cancel-bg:  rgba(248,113,113,.12);
+  --pend:    #D97706;  --pend-bg:  rgba(217,119,6,.1);
+  --prep:    #2563EB;  --prep-bg:  rgba(37,99,235,.1);
+  --listo:   #7C3AED;  --listo-bg: rgba(124,58,237,.1);
+  --entrega: #16A34A;  --entrega-bg: rgba(22,163,74,.1);
+  --cancel:  #DC2626;  --cancel-bg:  rgba(220,38,38,.1);
 }
 
 // ── RESET ─────────────────────────────────────────────────────
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-  height: 100%;
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-}
-
+html { height: 100%; font-size: 16px; -webkit-text-size-adjust: 100%; }
 body {
   height: 100%;
   font-family: var(--font);
@@ -120,9 +110,7 @@ body {
 }
 
 // ── FIX MATERIAL ICONS ─────────────────────────────────────────
-// Arregla el desplazamiento vertical de los iconos de Material
-mat-icon,
-.material-icons {
+mat-icon, .material-icons {
   font-family: 'Material Icons' !important;
   font-size: 20px !important;
   line-height: 1 !important;
@@ -130,10 +118,9 @@ mat-icon,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  user-select: none;
+  width: 20px; height: 20px;
+  flex-shrink: 0; user-select: none;
+  color: inherit;
 }
 
 // ── SCROLLBAR ─────────────────────────────────────────────────
@@ -158,7 +145,6 @@ small { font-size: .8rem; color: var(--text-3); }
   &:active { transform: scale(.97); }
   &:disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
 }
-
 .btn-primary {
   @extend .btn;
   background: var(--primary); color: #fff;
@@ -168,7 +154,7 @@ small { font-size: .8rem; color: var(--text-3); }
   @extend .btn;
   background: var(--surface-2); color: var(--text);
   border: 1px solid var(--border);
-  &:hover { border-color: var(--border-2); }
+  &:hover { border-color: var(--border-2); background: var(--surface-3); }
 }
 .btn-ghost {
   @extend .btn;
@@ -177,30 +163,48 @@ small { font-size: .8rem; color: var(--text-3); }
   &:hover { border-color: var(--text-3); color: var(--text); }
 }
 
-// ── INPUTS ────────────────────────────────────────────────────
+// ── INPUTS & SELECTS ─────────────────────────────────────────
+// Fondo blanco con borde visible — funciona en todos los themes claros
 .input, .form-input, .form-select, .form-textarea {
   width: 100%;
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--r-md); padding: .65rem .9rem;
-  color: var(--text); font-family: var(--font); font-size: .9rem;
+  background: var(--bg);
+  border: 1.5px solid var(--border-2);
+  border-radius: var(--r-md);
+  padding: .65rem .9rem;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .9rem;
   transition: border-color var(--t);
   &::placeholder { color: var(--text-3); }
   &:focus { outline: none; border-color: var(--primary); }
-  option { background: var(--surface); color: var(--text); }
+}
+.form-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .75rem center;
+  padding-right: 2.25rem;
+  // Opciones del select
+  option { background: var(--bg); color: var(--text); }
 }
 .form-textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
-.form-select { appearance: none; cursor: pointer; }
 .form-group { display: flex; flex-direction: column; gap: .3rem; }
 .form-label {
   font-size: .78rem; font-weight: 600; letter-spacing: .04em;
   text-transform: uppercase; color: var(--text-3);
 }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.form-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
 
 // ── CARDS ─────────────────────────────────────────────────────
 .card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r-lg); padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.25rem;
   transition: box-shadow var(--t), border-color var(--t);
   &:hover { box-shadow: var(--shadow-md); border-color: var(--border-2); }
 }
@@ -209,58 +213,44 @@ small { font-size: .8rem; color: var(--text-3); }
 .badge {
   display: inline-flex; align-items: center; gap: .3rem;
   padding: .25rem .65rem; border-radius: 20px;
-  font-size: .75rem; font-weight: 600; letter-spacing: .02em;
-  &--pendiente   { background: var(--pend-bg);   color: var(--pend); }
-  &--preparacion { background: var(--prep-bg);   color: var(--prep); }
-  &--preparado   { background: var(--listo-bg);  color: var(--listo); }
+  font-size: .73rem; font-weight: 600; letter-spacing: .02em;
+  &--pendiente   { background: var(--pend-bg);    color: var(--pend); }
+  &--preparacion { background: var(--prep-bg);    color: var(--prep); }
+  &--preparado   { background: var(--listo-bg);   color: var(--listo); }
   &--entregado   { background: var(--entrega-bg); color: var(--entrega); }
-  &--cancelado   { background: var(--cancel-bg); color: var(--cancel); }
+  &--cancelado   { background: var(--cancel-bg);  color: var(--cancel); }
 }
-.badge-activo   { @extend .badge; background: rgba(34,197,94,.12); color: #22c55e; }
-.badge-inactivo { @extend .badge; background: rgba(239,68,68,.12); color: #ef4444; }
-.badge-admin    { @extend .badge; background: var(--primary-dim); color: var(--primary); }
-.badge-rol      { @extend .badge-admin; }
-.badge-categoria { @extend .badge; background: var(--accent-dim); color: var(--accent); }
+.badge-activo    { @extend .badge; background: rgba(22,163,74,.1);  color: #16A34A; }
+.badge-inactivo  { @extend .badge; background: rgba(220,38,38,.1);  color: #DC2626; }
+.badge-admin     { @extend .badge; background: var(--primary-dim);  color: var(--primary); }
+.badge-rol       { @extend .badge-admin; }
+.badge-categoria { @extend .badge; background: var(--accent-dim);   color: var(--accent); }
 
 // ── CHIPS ─────────────────────────────────────────────────────
-.chip {
-  display: inline-flex; align-items: center;
-  padding: .15rem .55rem; border-radius: 20px;
-  font-size: .72rem; font-weight: 500;
-  background: var(--primary-dim); color: var(--primary);
-  white-space: nowrap;
-}
+.chip         { display: inline-flex; align-items: center; padding: .15rem .55rem; border-radius: 20px; font-size: .72rem; font-weight: 500; background: var(--primary-dim); color: var(--primary); white-space: nowrap; }
 .chip--moneda { background: var(--accent-dim); color: var(--accent); }
-.chip--more   { background: var(--surface-2); color: var(--text-3); }
+.chip--more   { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); }
 .chip-list    { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
 
 // ── ADMIN LAYOUT ──────────────────────────────────────────────
 .admin-page { display: flex; flex-direction: column; gap: 1rem; }
-
 .page-header {
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap; gap: .75rem;
-  h1, .page-title {
-    font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: .5rem;
-  }
 }
-.page-header__left  { display: flex; align-items: center; gap: .75rem; }
+.page-header__left    { display: flex; align-items: center; gap: .75rem; }
 .page-header__actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
 .page-title  { font-size: 1.4rem; font-weight: 700; }
-.page-count  {
-  background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: 20px; padding: .2rem .65rem;
-  font-size: .75rem; font-weight: 600; color: var(--text-3);
-}
+.page-count  { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: .2rem .65rem; font-size: .75rem; font-weight: 600; color: var(--text-3); }
 
 // ── SEARCH BOX ────────────────────────────────────────────────
 .search-box {
   display: flex; align-items: center; gap: .4rem;
-  background: var(--surface); border: 1.5px solid var(--border);
+  background: var(--bg); border: 1.5px solid var(--border-2);
   border-radius: var(--r-md); padding: .45rem .85rem;
   transition: border-color var(--t);
   &:focus-within { border-color: var(--primary); }
-  mat-icon { color: var(--text-3); width: 16px; height: 16px; font-size: 16px !important; }
+  mat-icon { color: var(--text-3); font-size: 16px !important; width: 16px !important; height: 16px !important; }
   input {
     background: none; border: none; outline: none;
     color: var(--text); font-family: var(--font); font-size: .875rem; width: 180px;
@@ -268,17 +258,24 @@ small { font-size: .8rem; color: var(--text-3); }
   }
 }
 
-// ── ADMIN TABLE ───────────────────────────────────────────────
+// ── ADMIN TABLE ─── con scroll horizontal en móvil ───────────
 .admin-table-wrap {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r-lg); overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  // Scroll horizontal en pantallas pequeñas
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .admin-table {
   width: 100%; border-collapse: collapse;
+  min-width: 560px; // Evita que se parta — fuerza scroll horizontal
   th {
     background: var(--surface-2); color: var(--text-3);
     font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
     padding: .7rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
   }
   td {
     padding: .8rem 1rem; border-bottom: 1px solid var(--border);
@@ -294,11 +291,11 @@ small { font-size: .8rem; color: var(--text-3); }
 .btn-action {
   display: inline-flex; align-items: center; justify-content: center;
   background: none; border: 1px solid var(--border);
-  border-radius: var(--r-sm); padding: .3rem;
+  border-radius: var(--r-sm); padding: .3rem; width: 30px; height: 30px;
   color: var(--text-3); cursor: pointer; transition: all var(--t);
-  &:hover { border-color: var(--primary); color: var(--primary); }
-  &.btn-action--danger:hover  { border-color: #ef4444; color: #ef4444; }
-  &.btn-action--success:hover { border-color: #22c55e; color: #22c55e; }
+  &:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); }
+  &.btn-action--danger:hover  { border-color: #DC2626; color: #DC2626; background: rgba(220,38,38,.08); }
+  &.btn-action--success:hover { border-color: #16A34A; color: #16A34A; background: rgba(22,163,74,.08); }
 }
 .btn-icon {
   display: inline-flex; align-items: center; justify-content: center;
@@ -311,24 +308,21 @@ small { font-size: .8rem; color: var(--text-3); }
 // ── MODAL ─────────────────────────────────────────────────────
 .modal-overlay {
   position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0,0,0,.65);
+  background: rgba(0,0,0,.4);
   display: flex; align-items: center; justify-content: center;
   padding: 1rem;
   animation: fadeIn .15s var(--ease);
 }
 .modal {
-  background: var(--surface); border: 1px solid var(--border-2);
+  background: var(--bg); border: 1px solid var(--border-2);
   border-radius: var(--r-xl); padding: 1.5rem;
   width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
   animation: slideUp .2s var(--ease);
   &--wide { max-width: 640px; }
 }
-.modal__header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1.25rem; padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-}
-.modal__title  { font-size: 1rem; font-weight: 700; }
+.modal__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.modal__title  { font-size: 1rem; font-weight: 700; color: var(--text); }
 .modal__body   { display: flex; flex-direction: column; gap: .85rem; }
 .modal__footer { display: flex; gap: .6rem; justify-content: flex-end; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); }
 .btn-cancel    { @extend .btn-ghost; }
@@ -336,19 +330,19 @@ small { font-size: .8rem; color: var(--text-3); }
 // ── CHECKBOX GRID ─────────────────────────────────────────────
 .checkbox-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: .4rem; max-height: 240px; overflow-y: auto;
-  padding: .25rem;
+  gap: .4rem; max-height: 240px; overflow-y: auto; padding: .25rem;
   &--monedas { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
 }
 .checkbox-item {
   display: flex; align-items: center; gap: .5rem;
   padding: .45rem .65rem; border-radius: var(--r-md);
-  border: 1px solid var(--border); cursor: pointer;
+  border: 1.5px solid var(--border); cursor: pointer;
   transition: all var(--t); font-size: .82rem;
+  background: var(--bg);
   input[type=checkbox] { display: none; }
   span { font-weight: 500; color: var(--text-2); flex: 1; }
   small { color: var(--text-3); font-size: .72rem; }
-  &:hover { border-color: var(--border-2); }
+  &:hover { border-color: var(--border-2); background: var(--surface-2); }
   &.selected { background: var(--primary-dim); border-color: var(--primary); span { color: var(--text); } }
 }
 
@@ -366,36 +360,40 @@ small { font-size: .8rem; color: var(--text-3); }
   100% { background-position: 400px 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
   background-size: 800px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--r-md);
 }
-.skeleton-table {
-  @extend .skeleton;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-}
-.skeleton-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;
-}
+.skeleton-table { @extend .skeleton; border: 1px solid var(--border); border-radius: var(--r-lg); }
+.skeleton-grid  { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
 
 // ── ANIMACIONES ───────────────────────────────────────────────
-@keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideIn  { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
-.fade-in   { animation: fadeIn .25s var(--ease); }
-.slide-up  { animation: slideUp .25s var(--ease); }
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in  { animation: fadeIn .2s var(--ease); }
+.slide-up { animation: slideUp .22s var(--ease); }
 
-// ── MOBILE CONTENT PADDING ────────────────────────────────────
-// En móvil, el contenido sube 64px para no quedar detrás de la bottom bar
+// ── MOBILE ────────────────────────────────────────────────────
 @media (max-width: 767px) {
   .shell-main {
     padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + .5rem) !important;
   }
+  // Tablas siempre con scroll horizontal
+  .admin-table-wrap { border-radius: var(--r-md); }
 }
 
 // ── MATERIAL OVERRIDES ────────────────────────────────────────
-.mat-mdc-snack-bar-container { border-radius: var(--r-md) !important; }
-// Eliminar ripple glassmorphism de mat-list
-.mat-mdc-list-item .mdc-list-item__primary-text { color: inherit !important; }
+// Snackbar centrado abajo (no esquina izquierda)
+.mat-mdc-snack-bar-container {
+  border-radius: var(--r-md) !important;
+  --mdc-snackbar-container-color: var(--text);
+  --mdc-snackbar-supporting-text-color: var(--bg);
+  margin-bottom: calc(var(--nav-h) + var(--safe-bottom) + .5rem) !important;
+
+  @media (min-width: 768px) {
+    margin-bottom: 1rem !important;
+    margin-left: calc(var(--sidebar-w) + 1rem) !important;
+  }
+}
+.mdc-snackbar { justify-content: center !important; }
