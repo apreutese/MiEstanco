@@ -45,18 +45,19 @@
     @for (pedido of pedidosFiltrados(); track pedido.id) {
       <a [routerLink]="['/pedidos', pedido.id]" class="historial-row"
          [id]="'hist-' + pedido.id">
-        <div class="historial-row__id">#{{ pedido.id }}</div>
-        <div class="historial-row__bar">
-          <strong>{{ pedido.maquina.bar.nombre }}</strong>
-          <span>{{ pedido.maquina.nombre }}</span>
+        <!-- Línea 1: ID + Bar + Badge -->
+        <div class="historial-row__top">
+          <span class="historial-row__id">#{{ pedido.id }}</span>
+          <span class="historial-row__bar">{{ pedido.maquina.bar.nombre }}</span>
+          <span class="badge badge--{{ pedido.estado.toLowerCase().replace('_','-') }}">
+            {{ estadoLabel(pedido.estado) }}
+          </span>
         </div>
-        <span class="badge badge--{{ pedido.estado.toLowerCase().replace('_','-') }}">
-          {{ estadoLabel(pedido.estado) }}
-        </span>
-        <div class="historial-row__fecha">
-          {{ pedido.fechaCreacion | date:'dd/MM/yy HH:mm' }}
+        <!-- Línea 2: Máquina + Fecha -->
+        <div class="historial-row__bottom">
+          <span class="historial-row__maquina">{{ pedido.maquina.nombre }}</span>
+          <span class="historial-row__fecha">{{ pedido.fechaCreacion | date:'dd/MM/yy · HH:mm' }}</span>
         </div>
-        <mat-icon class="historial-row__arrow">chevron_right</mat-icon>
       </a>
     }
   </div>
