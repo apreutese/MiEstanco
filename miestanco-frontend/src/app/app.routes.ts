@@ -1,0 +1,51 @@
+import { Routes } from '@angular/router';
+import { authGuard, adminGuard, loginGuard } from './core/guards/auth.guard';
+
+export const routes: Routes = [
+  { path: '', redirectTo: '/pedidos', pathMatch: 'full' },
+  {
+    path: 'login',
+    canActivate: [loginGuard],
+    loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: '',
+    canActivate: [authGuard],
+    loadComponent: () => import('./layout/shell.component').then(m => m.ShellComponent),
+    children: [
+      {
+        path: 'pedidos',
+        loadComponent: () => import('./features/pedidos/pedidos-list.component').then(m => m.PedidosListComponent)
+      },
+      {
+        path: 'pedidos/:id',
+        loadComponent: () => import('./features/pedidos/pedido-detalle.component').then(m => m.PedidoDetalleComponent)
+      },
+      {
+        path: 'historial',
+        loadComponent: () => import('./features/pedidos/historial.component').then(m => m.HistorialComponent)
+      },
+      {
+        path: 'bares',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/bares/bares-list.component').then(m => m.BaresListComponent)
+      },
+      {
+        path: 'maquinas',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/maquinas/maquinas-list.component').then(m => m.MaquinasListComponent)
+      },
+      {
+        path: 'productos',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/productos/productos-list.component').then(m => m.ProductosListComponent)
+      },
+      {
+        path: 'usuarios',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/usuarios/usuarios-list.component').then(m => m.UsuariosListComponent)
+      },
+    ]
+  },
+  { path: '**', redirectTo: '/pedidos' }
+];

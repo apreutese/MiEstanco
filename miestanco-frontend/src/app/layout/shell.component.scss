@@ -1,0 +1,82 @@
+.shell-container { height: 100vh; }
+
+// ── SIDENAV ──────────────────────────────────────────────────
+.shell-nav {
+  width: 240px;
+  background: var(--bg-surface) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+.nav-brand {
+  display: flex; align-items: center; gap: .75rem;
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  &__icon { font-size: 1.8rem; }
+  &__name {
+    font-size: 1.2rem; font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.nav-list { padding: .5rem 0; flex: 1; }
+
+.nav-item {
+  margin: .2rem .75rem !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--text-secondary) !important;
+  transition: var(--transition) !important;
+
+  mat-icon { color: var(--text-muted) !important; }
+
+  &:hover {
+    background: var(--bg-card-hover) !important;
+    color: var(--text-primary) !important;
+    mat-icon { color: var(--primary-light) !important; }
+  }
+
+  &--active {
+    background: rgba(var(--primary), .15) !important;
+    background: color-mix(in srgb, var(--primary) 15%, transparent) !important;
+    color: var(--primary-light) !important;
+    mat-icon { color: var(--primary-light) !important; }
+  }
+}
+
+// Footer del nav
+.nav-footer {
+  padding: 1rem .75rem;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: .5rem;
+}
+.nav-user {
+  display: flex; align-items: center; gap: .75rem; flex: 1; min-width: 0;
+  &__avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .95rem; color: #fff; flex-shrink: 0;
+  }
+  &__info { display: flex; flex-direction: column; min-width: 0; }
+  &__name { font-size: .875rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  &__role { font-size: .75rem; color: var(--text-muted); }
+}
+.nav-logout { color: var(--text-muted) !important; }
+
+// ── CONTENT ──────────────────────────────────────────────────
+.shell-content { background: var(--bg) !important; }
+
+.shell-toolbar {
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+  display: none; // Oculto en desktop
+  @media (max-width: 768px) { display: flex; }
+}
+.flex-1 { flex: 1; }
+
+.shell-main {
+  padding: 1.5rem;
+  min-height: calc(100vh - 64px);
+  @media (max-width: 768px) { padding: 1rem; }
+}

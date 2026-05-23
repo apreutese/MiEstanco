@@ -1,0 +1,56 @@
+<mat-sidenav-container class="shell-container">
+
+  <!-- Sidebar -->
+  <mat-sidenav #sidenav [opened]="sidenavOpen()" mode="side" class="shell-nav">
+    <!-- Logo -->
+    <div class="nav-brand">
+      <span class="nav-brand__icon">🏪</span>
+      <span class="nav-brand__name">MiEstanco</span>
+    </div>
+
+    <!-- Menú -->
+    <mat-nav-list class="nav-list">
+      @for (item of visibleNav(); track item.route) {
+        <a mat-list-item
+           [routerLink]="item.route"
+           routerLinkActive="nav-item--active"
+           class="nav-item"
+           [id]="'nav-' + item.route.slice(1)">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+
+    <!-- Usuario y logout -->
+    <div class="nav-footer">
+      <div class="nav-user">
+        <div class="nav-user__avatar">{{ usuario()?.nombre?.charAt(0) }}</div>
+        <div class="nav-user__info">
+          <span class="nav-user__name">{{ usuario()?.nombre }}</span>
+          <span class="nav-user__role">{{ usuario()?.rol === 'ADMIN' ? 'Administrador' : 'Trabajadora' }}</span>
+        </div>
+      </div>
+      <button mat-icon-button id="btn-logout" (click)="logout()"
+              matTooltip="Cerrar sesión" class="nav-logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <!-- Contenido principal -->
+  <mat-sidenav-content class="shell-content">
+    <!-- Topbar móvil -->
+    <mat-toolbar class="shell-toolbar">
+      <button mat-icon-button id="btn-toggle-nav" (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="flex-1"></span>
+    </mat-toolbar>
+
+    <main class="shell-main">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

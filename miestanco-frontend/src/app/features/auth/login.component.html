@@ -1,0 +1,52 @@
+<div class="login-page">
+  <!-- Fondo animado -->
+  <div class="login-bg">
+    <div class="glow glow--1"></div>
+    <div class="glow glow--2"></div>
+  </div>
+
+  <div class="login-card fade-in">
+    <!-- Logo / Marca -->
+    <div class="login-header">
+      <div class="login-logo">🏪</div>
+      <h1 class="login-title">MiEstanco</h1>
+      <p class="login-subtitle">Gestión de pedidos</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form" id="login-form">
+
+      <mat-form-field appearance="fill" class="login-field">
+        <mat-label>Usuario</mat-label>
+        <input matInput formControlName="username" id="login-username"
+               autocomplete="username" placeholder="padre / madre / trabajadora1" />
+        @if (form.get('username')?.hasError('required') && form.get('username')?.touched) {
+          <mat-error>El usuario es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="login-field">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password" id="login-password"
+               autocomplete="current-password" />
+        @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+          <mat-error>La contraseña es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      @if (errorMsg()) {
+        <div class="login-error fade-in">⚠️ {{ errorMsg() }}</div>
+      }
+
+      <button type="submit" id="login-submit"
+              class="btn-primary login-btn"
+              [disabled]="form.invalid || loading()">
+        @if (loading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          Entrar
+        }
+      </button>
+    </form>
+  </div>
+</div>
