@@ -46,7 +46,6 @@ public class MaquinaService {
     public Maquina actualizar(Long id, Maquina datosNuevos) {
         Maquina maquina = obtenerPorId(id);
         maquina.setNombre(datosNuevos.getNombre());
-        maquina.setTipo(datosNuevos.getTipo());
         maquina.setNotas(datosNuevos.getNotas());
         return maquinaRepository.save(maquina);
     }

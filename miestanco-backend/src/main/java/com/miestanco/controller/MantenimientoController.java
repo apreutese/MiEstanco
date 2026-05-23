@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,6 +22,23 @@ import java.util.Map;
 public class MantenimientoController {
 
     private final EntityManager em;
+    private final javax.sql.DataSource dataSource;
+
+    @DeleteMapping("/columna-tipo-maquinas")
+    public ResponseEntity<ApiResponse<String>> dropColumnTipo() {
+        try (Connection conn = dataSource.getConnection();
+             var stmt = conn.createStatement()) {
+            stmt.execute("ALTER TABLE maquinas DROP COLUMN tipo");
+            return ResponseEntity.ok(ApiResponse.ok("Columna tipo eliminada de maquinas", null));
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            // Error 1091 = columna no existe, lo tratamos como OK
+            if (msg != null && msg.contains("1091")) {
+                return ResponseEntity.ok(ApiResponse.ok("Columna tipo ya no existía", null));
+            }
+            return ResponseEntity.ok(ApiResponse.ok("Info: " + msg, null));
+        }
+    }
 
     @DeleteMapping("/limpiar-duplicados")
     @Transactional
