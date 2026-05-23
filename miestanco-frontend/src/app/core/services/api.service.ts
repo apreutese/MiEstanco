@@ -6,7 +6,7 @@ import { ApiResponse } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly BASE = 'http://localhost:8080/api';
+  private readonly BASE = '/api';
   private http = inject(HttpClient);
 
   get<T>(path: string): Observable<T> {
