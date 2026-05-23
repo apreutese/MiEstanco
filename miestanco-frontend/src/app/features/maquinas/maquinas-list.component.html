@@ -27,28 +27,39 @@
     <div class="admin-table-wrap fade-in">
       <table class="admin-table">
         <thead><tr>
-          <th>Nombre</th><th>Bar</th><th>Tipo</th><th>Productos</th><th>Monedas</th><th>Estado</th><th>Acciones</th>
+          <th>Nombre</th><th>Bar</th><th>Productos</th><th>Monedas aceptadas</th><th>Estado</th><th>Acciones</th>
         </tr></thead>
         <tbody>
           @for (m of maquinasFiltradas(); track m.id) {
             <tr [class.inactivo]="!m.activa">
-              <td><strong>{{ m.nombre }}</strong></td>
+              <td>
+                <strong>{{ m.nombre }}</strong>
+                @if (m.tipo) { <br><small class="text-muted">{{ m.tipo }}</small> }
+              </td>
               <td>{{ m.bar.nombre }}</td>
-              <td>{{ m.tipo || '—' }}</td>
               <td>
                 <div class="chip-list">
-                  @for (p of m.productos.slice(0,3); track p.id) {
+                  @for (p of uniqueById(m.productos).slice(0,2); track p.id) {
                     <span class="chip">{{ p.nombre }}</span>
                   }
-                  @if (m.productos.length > 3) {
-                    <span class="chip chip--more">+{{ m.productos.length - 3 }}</span>
+                  @if (uniqueById(m.productos).length > 2) {
+                    <span class="chip chip--more">+{{ uniqueById(m.productos).length - 2 }} más</span>
+                  }
+                  @if (uniqueById(m.productos).length === 0) {
+                    <span class="text-muted" style="font-size:.8rem">Sin productos</span>
                   }
                 </div>
               </td>
               <td>
                 <div class="chip-list">
-                  @for (mo of m.monedas; track mo.id) {
+                  @for (mo of uniqueById(m.monedas).slice(0,4); track mo.id) {
                     <span class="chip chip--moneda">{{ mo.denominacion }}</span>
+                  }
+                  @if (uniqueById(m.monedas).length > 4) {
+                    <span class="chip chip--more">+{{ uniqueById(m.monedas).length - 4 }}</span>
+                  }
+                  @if (uniqueById(m.monedas).length === 0) {
+                    <span class="text-muted" style="font-size:.8rem">Todas</span>
                   }
                 </div>
               </td>
@@ -95,8 +106,8 @@
                    [value]="form().nombre" (input)="setField('nombre', $any($event.target).value)" />
           </div>
           <div class="form-group">
-            <label class="form-label">Tipo</label>
-            <input class="form-input" id="maq-tipo" placeholder="Tabaco mixta"
+            <label class="form-label">Descripción / Tipo</label>
+            <input class="form-input" id="maq-tipo" placeholder="Ej: Solo tabaco, Mixta..."
                    [value]="form().tipo" (input)="setField('tipo', $any($event.target).value)" />
           </div>
         </div>
@@ -115,14 +126,14 @@
 
         <!-- Notas -->
         <div class="form-group">
-          <label class="form-label">Notas</label>
+          <label class="form-label">Notas internas</label>
           <textarea class="form-textarea" id="maq-notas" placeholder="Observaciones..."
                     [value]="form().notas" (input)="setField('notas', $any($event.target).value)"></textarea>
         </div>
 
         <!-- Productos -->
         <div class="form-group">
-          <label class="form-label">Productos asignados ({{ productosSeleccionados().size }})</label>
+          <label class="form-label">Productos que puede pedir ({{ productosSeleccionados().size }} seleccionados)</label>
           <div class="checkbox-grid">
             @for (p of productos(); track p.id) {
               <label class="checkbox-item" [class.selected]="isProductoSelected(p.id)">
@@ -137,7 +148,7 @@
 
         <!-- Monedas -->
         <div class="form-group">
-          <label class="form-label">Monedas aceptadas ({{ monedasSeleccionadas().size }})</label>
+          <label class="form-label">Monedas que acepta la máquina ({{ monedasSeleccionadas().size }} seleccionadas)</label>
           <div class="checkbox-grid checkbox-grid--monedas">
             @for (mo of monedas(); track mo.id) {
               <label class="checkbox-item" [class.selected]="isMonedaSelected(mo.id)">

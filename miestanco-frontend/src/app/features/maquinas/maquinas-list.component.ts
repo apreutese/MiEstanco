@@ -139,4 +139,9 @@ export class MaquinasListComponent implements OnInit {
 
   isProductoSelected(id: number) { return this.productosSeleccionados().has(id); }
   isMonedaSelected(id: number)   { return this.monedasSeleccionadas().has(id); }
+
+  uniqueById<T extends { id: number }>(arr: T[]): T[] {
+    const seen = new Set<number>();
+    return arr.filter(x => { if (seen.has(x.id)) return false; seen.add(x.id); return true; });
+  }
 }
