@@ -2,6 +2,7 @@ import {
   Component, signal, computed, inject, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductoService, ProductoPayload } from './producto.service';
@@ -11,7 +12,7 @@ import { Producto, Categoria } from '../../core/models/models';
   selector: 'app-productos-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, MatIconModule, MatSnackBarModule],
+  imports: [FormsModule, DecimalPipe, MatIconModule, MatSnackBarModule],
   templateUrl: './productos-list.component.html',
   styleUrl: './productos-list.component.scss'
 })

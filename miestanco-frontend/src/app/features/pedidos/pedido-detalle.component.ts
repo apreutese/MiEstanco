@@ -2,7 +2,7 @@ import {
   Component, signal, computed, inject, OnInit, ChangeDetectionStrategy, input
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,7 +16,7 @@ import { Pedido, EstadoPedido, LineaProducto, LineaMoneda } from '../../core/mod
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterLink, DatePipe,
+    RouterLink, DatePipe, DecimalPipe,
     MatIconModule, MatButtonModule, MatSnackBarModule, MatProgressBarModule
   ],
   templateUrl: './pedido-detalle.component.html',

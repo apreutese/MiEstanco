@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PedidoService } from './pedido.service';
@@ -15,7 +16,7 @@ interface LineaMonedaForm   { moneda: Moneda;    cantidad: number; }
   selector: 'app-crear-pedido',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, FormsModule, MatIconModule, MatSnackBarModule],
+  imports: [RouterLink, FormsModule, DecimalPipe, MatIconModule, MatSnackBarModule],
   templateUrl: './crear-pedido.component.html',
   styleUrl: './crear-pedido.component.scss'
 })
