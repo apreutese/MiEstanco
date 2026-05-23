@@ -23,8 +23,6 @@ public class Maquina {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(length = 100)
-    private String tipo;
 
     @Column(columnDefinition = "TEXT")
     private String notas;

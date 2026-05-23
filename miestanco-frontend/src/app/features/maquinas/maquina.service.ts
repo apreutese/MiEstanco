@@ -4,7 +4,7 @@ import { ApiService } from '../../core/services/api.service';
 import { Maquina } from '../../core/models/models';
 
 export interface MaquinaPayload {
-  nombre: string; tipo?: string; notas?: string;
+  nombre: string; notas?: string;
   barId: number; productoIds: number[]; monedaIds: number[];
 }
 

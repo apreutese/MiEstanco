@@ -38,9 +38,9 @@ export class MaquinasListComponent implements OnInit {
   editando  = signal<Maquina | null>(null);
 
   // Form
-  form = signal<{ nombre: string; tipo: string; notas: string; barId: number | '' }>({
-    nombre: '', tipo: '', notas: '', barId: ''
-  });
+  form = signal<{ nombre: string; notas: string; barId: number | '' }>(
+    { nombre: '', notas: '', barId: '' }
+  );
   productosSeleccionados = signal<Set<number>>(new Set());
   monedasSeleccionadas   = signal<Set<number>>(new Set());
 
@@ -68,7 +68,7 @@ export class MaquinasListComponent implements OnInit {
 
   abrirCrear() {
     this.editando.set(null);
-    this.form.set({ nombre: '', tipo: '', notas: '', barId: '' });
+    this.form.set({ nombre: '', notas: '', barId: '' });
     this.productosSeleccionados.set(new Set());
     this.monedasSeleccionadas.set(new Set());
     this.modal.set(true);
@@ -76,7 +76,7 @@ export class MaquinasListComponent implements OnInit {
 
   abrirEditar(m: Maquina) {
     this.editando.set(m);
-    this.form.set({ nombre: m.nombre, tipo: m.tipo ?? '', notas: m.notas ?? '', barId: m.bar.id });
+    this.form.set({ nombre: m.nombre, notas: m.notas ?? '', barId: m.bar.id });
     this.productosSeleccionados.set(new Set(m.productos.map(p => p.id)));
     this.monedasSeleccionadas.set(new Set(m.monedas.map(mo => mo.id)));
     this.modal.set(true);
@@ -106,7 +106,7 @@ export class MaquinasListComponent implements OnInit {
     this.guardando.set(true);
 
     const payload: MaquinaPayload = {
-      nombre: f.nombre, tipo: f.tipo || undefined, notas: f.notas || undefined,
+      nombre: f.nombre, notas: f.notas || undefined,
       barId: +f.barId,
       productoIds: Array.from(this.productosSeleccionados()),
       monedaIds: Array.from(this.monedasSeleccionadas())
