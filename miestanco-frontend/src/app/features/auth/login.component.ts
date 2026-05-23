@@ -23,6 +23,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private snack = inject(MatSnackBar);
+  private router = inject(Router);
 
   loading = signal(false);
   errorMsg = signal('');
@@ -43,7 +44,8 @@ export class LoginComponent {
     }).subscribe({
       next: () => {
         this.loading.set(false);
-        this.snack.open('¡Bienvenido!', '', { duration: 2000 });
+        this.snack.open('¡Bienvenido!', '', { duration: 1500 });
+        this.router.navigate(['/pedidos']);
       },
       error: (err) => {
         this.loading.set(false);
