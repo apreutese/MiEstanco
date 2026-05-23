@@ -9,6 +9,13 @@ const app = express();
 const PORT = process.env.PORT || 4201;
 const DIST = path.join(__dirname, 'dist/miestanco-frontend/browser');
 
+// Salta la pantalla de aviso de ngrok en TODAS las respuestas
+// Necesario para que la PWA cargue directamente sin interstitial
+app.use((req, res, next) => {
+  res.setHeader('ngrok-skip-browser-warning', 'true');
+  next();
+});
+
 // 1. Proxy de API al backend Spring Boot
 //    Backend context path = /api → petición /api/auth/login debe llegar como /api/auth/login
 app.use(
