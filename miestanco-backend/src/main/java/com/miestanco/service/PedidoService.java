@@ -28,15 +28,18 @@ public class PedidoService {
     private static final List<EstadoPedido> ESTADOS_FINALES =
             List.of(EstadoPedido.ENTREGADO, EstadoPedido.CANCELADO);
 
+    @Transactional(readOnly = true)
     public List<Pedido> listarActivos() {
         return pedidoRepository.findByEstadoNotInOrderByFechaCreacionDesc(ESTADOS_FINALES);
     }
 
+    @Transactional(readOnly = true)
     public List<Pedido> listarHistorial(EstadoPedido estado, Long maquinaId,
                                         LocalDateTime desde, LocalDateTime hasta) {
         return pedidoRepository.findHistorial(estado, maquinaId, desde, hasta);
     }
 
+    @Transactional(readOnly = true)
     public Pedido obtenerPorId(Long id) {
         return pedidoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado: " + id));

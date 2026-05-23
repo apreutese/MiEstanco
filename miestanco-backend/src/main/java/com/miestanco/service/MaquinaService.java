@@ -18,14 +18,17 @@ public class MaquinaService {
     private final ProductoRepository productoRepository;
     private final MonedaRepository monedaRepository;
 
+    @Transactional(readOnly = true)
     public List<Maquina> listarActivas() {
         return maquinaRepository.findByActivaTrueOrderByNombreAsc();
     }
 
+    @Transactional(readOnly = true)
     public List<Maquina> listarPorBar(Long barId) {
         return maquinaRepository.findByBar_IdAndActivaTrue(barId);
     }
 
+    @Transactional(readOnly = true)
     public Maquina obtenerPorId(Long id) {
         return maquinaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Máquina no encontrada: " + id));
