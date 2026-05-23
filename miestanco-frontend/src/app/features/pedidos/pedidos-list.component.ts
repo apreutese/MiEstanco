@@ -53,8 +53,13 @@ export class PedidosListComponent implements OnInit {
   cargar() {
     this.loading.set(true);
     this.svc.listarActivos().subscribe({
-      next: p => { this.pedidos.set(p); this.loading.set(false); },
-      error: () => { this.loading.set(false); this.snack.open('Error al cargar pedidos', '', { duration: 3000 }); }
+      next: p => { this.pedidos.set(p ?? []); this.loading.set(false); },
+      error: (err) => {
+        console.error('Error cargando pedidos:', err);
+        this.loading.set(false);
+        const msg = err?.error?.mensaje || err?.message || 'Error al cargar pedidos';
+        this.snack.open(msg, '', { duration: 4000 });
+      }
     });
   }
 

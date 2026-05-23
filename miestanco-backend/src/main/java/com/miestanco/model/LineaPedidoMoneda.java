@@ -1,11 +1,13 @@
 package com.miestanco.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "lineas_pedido_moneda")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","pedido"})
 public class LineaPedidoMoneda {
 
     @Id

@@ -1,5 +1,6 @@
 package com.miestanco.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "lineas_pedido_producto")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","pedido"})
 public class LineaPedidoProducto {
 
     @Id

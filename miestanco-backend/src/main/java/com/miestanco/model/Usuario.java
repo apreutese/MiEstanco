@@ -1,5 +1,6 @@
 package com.miestanco.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.miestanco.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "usuarios")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","passwordHash"})
 public class Usuario {
 
     @Id

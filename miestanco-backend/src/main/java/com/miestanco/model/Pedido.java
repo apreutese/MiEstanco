@@ -1,5 +1,6 @@
 package com.miestanco.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.miestanco.enums.EstadoPedido;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "pedidos")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Pedido {
 
     @Id
