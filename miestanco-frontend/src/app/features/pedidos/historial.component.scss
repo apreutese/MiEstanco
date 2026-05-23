@@ -1,7 +1,10 @@
 // historial.component.scss — v3 tokens, mobile-first
 
 // ── FILTROS ──────────────────────────────────────────────────
-.filtros-bar { margin-bottom: 1rem; }
+.filtros-bar {
+  margin-top: 1.1rem;   // espacio desde el título
+  margin-bottom: 1rem;  // espacio antes de la lista
+}
 
 .filtros-row {
   display: flex; flex-direction: column; gap: .6rem;
