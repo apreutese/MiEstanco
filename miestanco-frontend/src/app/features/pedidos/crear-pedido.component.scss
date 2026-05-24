@@ -221,11 +221,12 @@
   font-family: var(--font); font-size: .72rem; font-weight: 800;
   cursor: pointer; transition: all var(--t); letter-spacing: .02em;
   min-height: 32px; min-width: 38px;
-  &:hover { background: var(--accent); color: #fff; }
+  &:hover:not(:disabled) { background: var(--accent); color: #fff; }
+  &:disabled { opacity: .4; cursor: not-allowed; }
   &--minus {
     background: rgba(204,0,0,.08); color: var(--primary);
     border-color: var(--primary);
-    &:hover { background: var(--primary); color: #fff; }
+    &:hover:not(:disabled) { background: var(--primary); color: #fff; }
   }
 }
 

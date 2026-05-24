@@ -115,11 +115,10 @@
                 <button class="cp-carton-btn"
                         (click)="setCantidadProducto(i, linea.cantidad + 10)"
                         [id]="'btn-carton-prod-' + i">+10</button>
-                @if (linea.cantidad >= 10) {
-                  <button class="cp-carton-btn cp-carton-btn--minus"
-                          (click)="setCantidadProducto(i, linea.cantidad - 10)"
-                          [id]="'btn-menos10-prod-' + i">-10</button>
-                }
+                <button class="cp-carton-btn cp-carton-btn--minus"
+                        [disabled]="linea.cantidad < 10"
+                        (click)="setCantidadProducto(i, linea.cantidad - 10)"
+                        [id]="'btn-menos10-prod-' + i">-10</button>
               </div>
 
             </div>
