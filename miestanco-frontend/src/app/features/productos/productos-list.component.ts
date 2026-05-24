@@ -26,6 +26,8 @@ export class ProductosListComponent implements OnInit {
   modalAbierto = signal(false);
   guardando = signal(false);
   editando = signal<Producto | null>(null);
+  fotoPreview = signal<string | null>(null);
+  subiendoFoto = signal(false);
 
   readonly categorias = Object.values(Categoria);
   readonly Categoria = Categoria;
@@ -54,10 +56,11 @@ export class ProductosListComponent implements OnInit {
   abrirEditar(p: Producto) {
     this.editando.set(p);
     this.form.set({ nombre: p.nombre, marca: p.marca ?? '', categoria: p.categoria, precio: p.precio });
+    this.fotoPreview.set(p.fotoUrl ?? null);
     this.modalAbierto.set(true);
   }
 
-  cerrarModal() { this.modalAbierto.set(false); }
+  cerrarModal() { this.modalAbierto.set(false); this.fotoPreview.set(null); }
 
   guardar() {
     if (!this.form().nombre || this.form().precio <= 0) return;
@@ -83,6 +86,28 @@ export class ProductosListComponent implements OnInit {
 
   setField(field: keyof ProductoPayload, value: any) {
     this.form.update(f => ({ ...f, [field]: value }));
+  }
+
+  onFotoSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file || !this.editando()) return;
+    // Preview local inmediato
+    const reader = new FileReader();
+    reader.onload = e => this.fotoPreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+    // Subir al backend
+    this.subiendoFoto.set(true);
+    const fd = new FormData();
+    fd.append('foto', file);
+    this.svc.subirFoto(this.editando()!.id, fd).subscribe({
+      next: p => {
+        this.productos.update(l => l.map(x => x.id === p.id ? p : x));
+        this.fotoPreview.set(p.fotoUrl ?? null);
+        this.subiendoFoto.set(false);
+        this.snack.open('Foto subida ✓', '', { duration: 2000 });
+      },
+      error: () => { this.subiendoFoto.set(false); this.snack.open('Error al subir la foto', '', { duration: 3000 }); }
+    });
   }
 
   categoriaLabel(c: Categoria) { return c === Categoria.TABACO ? 'Tabaco' : 'Miscelánea'; }

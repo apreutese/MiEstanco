@@ -1,1 +1,64 @@
-// Estilos en styles.scss global
+// productos-list.component.scss
+
+// ── MINIATURA EN TABLA ───────────────────────────────────────
+.prod-thumb {
+  width: 40px; height: 40px;
+  object-fit: cover; border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  display: block;
+}
+.prod-thumb--empty {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border-radius: var(--r-sm);
+  color: var(--text-3);
+  mat-icon { font-size: 18px !important; width: 18px !important; height: 18px !important; }
+}
+
+// ── ZONA DE FOTO (modal editar) ──────────────────────────────
+.foto-upload {
+  display: flex; flex-direction: column; align-items: center; gap: .75rem;
+  padding: 1rem; margin-bottom: 1rem;
+  background: var(--surface-2); border-radius: var(--r-lg);
+  border: 2px dashed var(--border-2);
+}
+
+.foto-preview {
+  position: relative; width: 120px; height: 120px;
+  border-radius: var(--r-md); overflow: hidden;
+  background: var(--bg); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+}
+
+.foto-placeholder {
+  color: var(--text-3);
+  font-size: 48px !important; width: 48px !important; height: 48px !important;
+}
+
+.foto-uploading {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.5); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; gap: .4rem;
+}
+
+.foto-btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .5rem 1rem; border-radius: var(--r-md);
+  background: var(--primary); color: #fff;
+  font-family: var(--font); font-size: .85rem; font-weight: 600;
+  cursor: pointer; transition: background var(--t);
+  mat-icon { font-size: 16px !important; width: 16px !important; height: 16px !important; }
+  &:hover { background: var(--primary-h); }
+}
+
+// ── SPINNER PEQUEÑO ──────────────────────────────────────────
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner-sm {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin .7s linear infinite; display: inline-block;
+}

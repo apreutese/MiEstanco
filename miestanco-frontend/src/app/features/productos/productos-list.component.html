@@ -23,12 +23,22 @@
   } @else {
     <div class="admin-table-wrap fade-in">
       <table class="admin-table">
-        <thead><tr>
-          <th>Producto</th><th>Marca</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th>
-        </tr></thead>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Producto</th><th>Marca</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
         <tbody>
           @for (p of productosFiltrados(); track p.id) {
             <tr [class.inactivo]="!p.activo">
+              <td>
+                @if (p.fotoUrl) {
+                  <img class="prod-thumb" [src]="p.fotoUrl" [alt]="p.nombre" />
+                } @else {
+                  <span class="prod-thumb--empty"><mat-icon>image_not_supported</mat-icon></span>
+                }
+              </td>
               <td><strong>{{ p.nombre }}</strong></td>
               <td>{{ p.marca || '—' }}</td>
               <td><span class="badge-categoria">{{ categoriaLabel(p.categoria) }}</span></td>
@@ -59,6 +69,30 @@
         <button class="btn-action" (click)="cerrarModal()"><mat-icon>close</mat-icon></button>
       </div>
       <div class="modal__body">
+
+        <!-- Zona de foto (solo al editar) -->
+        @if (editando()) {
+          <div class="foto-upload">
+            <div class="foto-preview">
+              @if (fotoPreview()) {
+                <img [src]="fotoPreview()!" alt="Preview" />
+              } @else {
+                <mat-icon class="foto-placeholder">add_photo_alternate</mat-icon>
+              }
+              @if (subiendoFoto()) {
+                <div class="foto-uploading">
+                  <span class="spinner-sm"></span> Subiendo...
+                </div>
+              }
+            </div>
+            <label class="foto-btn" for="foto-input">
+              <mat-icon>upload</mat-icon>
+              {{ fotoPreview() ? 'Cambiar foto' : 'Añadir foto' }}
+            </label>
+            <input id="foto-input" type="file" accept="image/*" hidden (change)="onFotoSelected($event)" />
+          </div>
+        }
+
         <div class="form-group">
           <label class="form-label">Nombre *</label>
           <input class="form-input" id="prod-nombre" placeholder="Marlboro Rojo"
