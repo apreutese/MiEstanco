@@ -104,14 +104,13 @@
                           (click)="setCantidadProducto(i, linea.cantidad - 10)"
                           [id]="'btn-menos10-prod-' + i">-10</button>
 
-                  @if (linea.cantidad > 0) {
-                    <button class="cp-card__btn cp-card__btn--minus"
-                            (click)="setCantidadProducto(i, linea.cantidad - 1)"
-                            [id]="'btn-menos-prod-' + i">
-                      <mat-icon>remove</mat-icon>
-                    </button>
-                    <span class="cp-card__qty">{{ linea.cantidad }}</span>
-                  }
+                  <button class="cp-card__btn cp-card__btn--minus"
+                          [disabled]="linea.cantidad === 0"
+                          (click)="setCantidadProducto(i, linea.cantidad - 1)"
+                          [id]="'btn-menos-prod-' + i">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span class="cp-card__qty" [class.cp-card__qty--active]="linea.cantidad > 0">{{ linea.cantidad }}</span>
 
                   <button class="cp-card__btn cp-card__btn--plus"
                           (click)="setCantidadProducto(i, linea.cantidad + 1)"
