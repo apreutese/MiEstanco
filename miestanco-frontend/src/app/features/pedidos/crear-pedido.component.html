@@ -112,11 +112,9 @@
                         [id]="'btn-mas-prod-' + i">
                   <mat-icon>add</mat-icon>
                 </button>
-                @if (linea.cantidad > 0) {
-                  <button class="cp-carton-btn"
-                          (click)="setCantidadProducto(i, linea.cantidad + 10)"
-                          [id]="'btn-carton-prod-' + i">+10</button>
-                }
+                <button class="cp-carton-btn"
+                        (click)="setCantidadProducto(i, linea.cantidad + 10)"
+                        [id]="'btn-carton-prod-' + i">+10</button>
               </div>
 
             </div>
