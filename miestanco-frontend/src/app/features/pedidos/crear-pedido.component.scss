@@ -213,7 +213,7 @@
   &--active { color: var(--primary); }
 }
 
-// ── BOTÓN CARTÓN (+10) ──────────────────────────────────────
+// ── BOTÓN CARTÓN (+10 / -10) ────────────────────────────────
 .cp-carton-btn {
   background: var(--accent-dim); color: var(--accent);
   border: 1.5px solid var(--accent);
@@ -222,6 +222,11 @@
   cursor: pointer; transition: all var(--t); letter-spacing: .02em;
   min-height: 32px; min-width: 38px;
   &:hover { background: var(--accent); color: #fff; }
+  &--minus {
+    background: rgba(204,0,0,.08); color: var(--primary);
+    border-color: var(--primary);
+    &:hover { background: var(--primary); color: #fff; }
+  }
 }
 
 // ── TOTAL ────────────────────────────────────────────────────
