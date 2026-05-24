@@ -7,12 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductoService, ProductoPayload } from './producto.service';
 import { Producto, Categoria } from '../../core/models/models';
+import { ImageCropperComponent } from '../../shared/image-cropper.component';
 
 @Component({
   selector: 'app-productos-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, DecimalPipe, MatIconModule, MatSnackBarModule],
+  imports: [FormsModule, DecimalPipe, MatIconModule, MatSnackBarModule, ImageCropperComponent],
   templateUrl: './productos-list.component.html',
   styleUrl: './productos-list.component.scss'
 })
@@ -28,6 +29,7 @@ export class ProductosListComponent implements OnInit {
   editando = signal<Producto | null>(null);
   fotoPreview = signal<string | null>(null);
   subiendoFoto = signal(false);
+  cropperFile = signal<File | null>(null);
 
   readonly categorias = Object.values(Categoria);
   readonly Categoria = Categoria;
@@ -91,17 +93,25 @@ export class ProductosListComponent implements OnInit {
   onFotoSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file || !this.editando()) return;
-    // Preview local inmediato
-    const reader = new FileReader();
-    reader.onload = e => this.fotoPreview.set(e.target?.result as string);
-    reader.readAsDataURL(file);
+    // Abrir el cropper en lugar de subir directo
+    this.cropperFile.set(file);
+    // Reset input para permitir seleccionar la misma imagen de nuevo
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  onCropped(blob: Blob) {
+    this.cropperFile.set(null);
+    // Preview local
+    const url = URL.createObjectURL(blob);
+    this.fotoPreview.set(url);
     // Subir al backend
     this.subiendoFoto.set(true);
     const fd = new FormData();
-    fd.append('foto', file);
+    fd.append('foto', blob, 'foto.jpg');
     this.svc.subirFoto(this.editando()!.id, fd).subscribe({
       next: p => {
         this.productos.update(l => l.map(x => x.id === p.id ? p : x));
+        URL.revokeObjectURL(url);
         this.fotoPreview.set(p.fotoUrl ?? null);
         this.subiendoFoto.set(false);
         this.snack.open('Foto subida ✓', '', { duration: 2000 });
@@ -109,6 +119,8 @@ export class ProductosListComponent implements OnInit {
       error: () => { this.subiendoFoto.set(false); this.snack.open('Error al subir la foto', '', { duration: 3000 }); }
     });
   }
+
+  onCropCancelled() { this.cropperFile.set(null); }
 
   categoriaLabel(c: Categoria) { return c === Categoria.TABACO ? 'Tabaco' : 'Miscelánea'; }
 }

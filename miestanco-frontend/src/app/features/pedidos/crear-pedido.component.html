@@ -71,34 +71,54 @@
         <span class="cp-step__num">3</span>
         <span class="cp-step__text">Productos</span>
       </div>
-      <div class="cp-section">
-        <div class="cp-items">
+      <div class="cp-section cp-section--no-pad">
+        <div class="cp-cards">
           @for (linea of lineasProducto(); track linea.producto.id; let i = $index) {
-            <div class="cp-item" [class.cp-item--active]="linea.cantidad > 0">
-              <div class="cp-item__info">
-                <span class="cp-item__name">{{ linea.producto.nombre }}</span>
-                <span class="cp-item__sub">{{ linea.producto.marca }} · {{ linea.producto.precio | number:'1.2-2' }}€</span>
+            <div class="cp-card" [class.cp-card--active]="linea.cantidad > 0">
+
+              <!-- Imagen del producto -->
+              <div class="cp-card__img-wrap">
+                @if (linea.producto.fotoUrl) {
+                  <img class="cp-card__img" [src]="linea.producto.fotoUrl" [alt]="linea.producto.nombre" />
+                } @else {
+                  <div class="cp-card__img-placeholder">
+                    <mat-icon>inventory_2</mat-icon>
+                  </div>
+                }
+                <!-- Badge cantidad encima de la imagen -->
+                @if (linea.cantidad > 0) {
+                  <span class="cp-card__badge">{{ linea.cantidad }}</span>
+                }
               </div>
-              <div class="cp-item__ctrl">
-                <button class="cp-qty-btn cp-qty-btn--minus"
-                        [disabled]="linea.cantidad === 0"
-                        (click)="setCantidadProducto(i, linea.cantidad - 1)"
-                        [id]="'btn-menos-prod-' + i">
-                  <mat-icon>remove</mat-icon>
-                </button>
-                <span class="cp-qty-num" [class.cp-qty-num--active]="linea.cantidad > 0">{{ linea.cantidad }}</span>
-                <button class="cp-qty-btn cp-qty-btn--plus"
+
+              <!-- Info -->
+              <div class="cp-card__body">
+                <span class="cp-card__name">{{ linea.producto.nombre }}</span>
+                <span class="cp-card__price">{{ linea.producto.precio | number:'1.2-2' }}€</span>
+              </div>
+
+              <!-- Controles -->
+              <div class="cp-card__ctrl">
+                @if (linea.cantidad > 0) {
+                  <button class="cp-card__btn cp-card__btn--minus"
+                          (click)="setCantidadProducto(i, linea.cantidad - 1)"
+                          [id]="'btn-menos-prod-' + i">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span class="cp-card__qty">{{ linea.cantidad }}</span>
+                }
+                <button class="cp-card__btn cp-card__btn--plus"
                         (click)="setCantidadProducto(i, linea.cantidad + 1)"
                         [id]="'btn-mas-prod-' + i">
                   <mat-icon>add</mat-icon>
                 </button>
-                <button class="cp-carton-btn"
-                        (click)="setCantidadProducto(i, linea.cantidad + 10)"
-                        [id]="'btn-carton-prod-' + i">+10</button>
+                @if (linea.cantidad > 0) {
+                  <button class="cp-carton-btn"
+                          (click)="setCantidadProducto(i, linea.cantidad + 10)"
+                          [id]="'btn-carton-prod-' + i">+10</button>
+                }
               </div>
-              @if (linea.cantidad > 0) {
-                <div class="cp-item__subtotal">{{ (linea.producto.precio * linea.cantidad) | number:'1.2-2' }}€</div>
-              }
+
             </div>
           }
         </div>

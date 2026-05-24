@@ -129,3 +129,11 @@
     </div>
   </div>
 }
+
+<!-- Cropper de imagen -->
+@if (cropperFile()) {
+  <app-image-cropper
+    [file]="cropperFile()!"
+    (cropped)="onCropped($event)"
+    (cancelled)="onCropCancelled()" />
+}
