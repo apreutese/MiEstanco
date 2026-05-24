@@ -26,11 +26,13 @@ app.use(
 );
 
 // 2. Proxy de /uploads al backend (fotos de productos)
+//    Backend context-path es /api, así que /uploads → /api/uploads
 app.use(
   createProxyMiddleware({
     pathFilter: '/uploads',
     target: 'http://localhost:8080',
     changeOrigin: true,
+    pathRewrite: { '^/uploads': '/api/uploads' },
   })
 );
 
