@@ -225,6 +225,14 @@
     font-size: .9rem;
   }
 }
+
+.cp-money-img-wrap {
+  width: 44px; height: 44px; border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  background: transparent;
+}
+.cp-money-img { border-radius: 50%; }
+
 .cp-item__subtotal { font-size: .8rem; font-weight: 700; color: var(--primary); width: 100%; text-align: right; padding-top: .25rem; margin-top: .25rem; border-top: 1px solid var(--border); }
 
 // ── CONTROLES DE CANTIDAD ───────────────────────────────────

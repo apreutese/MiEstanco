@@ -146,12 +146,21 @@
           @for (linea of lineasMoneda(); track linea.moneda.id; let i = $index) {
             <div class="cp-item" [class.cp-item--active]="linea.cantidad > 0">
               
-              <div class="cp-money-graphic" 
-                   [class.cp-money-graphic--bill]="linea.moneda.valorCentimos >= 500"
-                   [class.cp-money-graphic--bicolor]="linea.moneda.valorCentimos === 100 || linea.moneda.valorCentimos === 200"
-                   [class.cp-money-graphic--copper]="linea.moneda.valorCentimos <= 5">
-                <span>{{ linea.moneda.valorCentimos >= 100 ? (linea.moneda.valorCentimos / 100) + '€' : linea.moneda.valorCentimos + 'c' }}</span>
-              </div>
+              @if (!failedMonedas().has(linea.moneda.valorCentimos)) {
+                <div class="cp-card__img-wrap cp-money-img-wrap">
+                  <img class="cp-card__img cp-money-img" 
+                       [src]="'assets/monedas/' + linea.moneda.valorCentimos + '.png'" 
+                       [alt]="linea.moneda.denominacion"
+                       (error)="onMonedaError(linea.moneda.valorCentimos)" />
+                </div>
+              } @else {
+                <div class="cp-money-graphic" 
+                     [class.cp-money-graphic--bill]="linea.moneda.valorCentimos >= 500"
+                     [class.cp-money-graphic--bicolor]="linea.moneda.valorCentimos === 100 || linea.moneda.valorCentimos === 200"
+                     [class.cp-money-graphic--copper]="linea.moneda.valorCentimos <= 5">
+                  <span>{{ linea.moneda.valorCentimos >= 100 ? (linea.moneda.valorCentimos / 100) + '€' : linea.moneda.valorCentimos + 'c' }}</span>
+                </div>
+              }
 
               <div class="cp-item__info">
                 <span class="cp-item__name">{{ linea.moneda.denominacion }}</span>

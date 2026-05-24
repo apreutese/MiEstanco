@@ -47,6 +47,16 @@ export class CrearPedidoComponent implements OnInit {
     (this.lineasProducto().length > 0 || this.lineasMoneda().length > 0)
   );
 
+  failedMonedas = signal<Set<number>>(new Set());
+
+  onMonedaError(valor: number) {
+    this.failedMonedas.update(set => {
+      const n = new Set(set);
+      n.add(valor);
+      return n;
+    });
+  }
+
   ngOnInit() {
     this.svc.bares().subscribe(b => this.bares.set(b));
   }
