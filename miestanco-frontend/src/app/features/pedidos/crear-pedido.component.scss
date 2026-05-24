@@ -198,6 +198,33 @@
 }
 .cp-item__name { font-size: .9rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cp-item__sub  { font-size: .75rem; color: var(--text-3); }
+
+// Gráfico de monedas/billetes CSS
+.cp-money-graphic {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: 50%; background: #FDE047; // Dorado base
+  border: 4px solid #FBBF24;
+  color: #854D0E; font-weight: 800; font-size: .85rem;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,.5), 0 2px 4px rgba(0,0,0,.1);
+  font-family: var(--font);
+
+  // Bicolor (1€, 2€)
+  &--bicolor {
+    background: #FEF08A; border-color: #D4D4D8; color: #3F3F46;
+  }
+  // Cobre (1c, 2c, 5c)
+  &--copper {
+    background: #F87171; border-color: #DC2626; color: #7F1D1D;
+  }
+  // Billetes (5€, 10€, 20€...)
+  &--bill {
+    width: 54px; height: 34px; border-radius: 4px;
+    background: #86EFAC; border: 1px solid #22C55E; color: #14532D;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    font-size: .9rem;
+  }
+}
 .cp-item__subtotal { font-size: .8rem; font-weight: 700; color: var(--primary); width: 100%; text-align: right; padding-top: .25rem; margin-top: .25rem; border-top: 1px solid var(--border); }
 
 // ── CONTROLES DE CANTIDAD ───────────────────────────────────

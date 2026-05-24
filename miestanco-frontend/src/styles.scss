@@ -386,15 +386,30 @@ small { font-size: .8rem; color: var(--text-3); }
 }
 
 // ── MATERIAL OVERRIDES ────────────────────────────────────────
-// Snackbar centrado abajo (no esquina izquierda)
+// Snackbar Glovo Style (Notificación tipo píldora flotante)
 .mat-mdc-snack-bar-container {
-  border-radius: var(--r-md) !important;
-  --mdc-snackbar-container-color: var(--text);
-  --mdc-snackbar-supporting-text-color: var(--bg);
-  margin-bottom: calc(var(--nav-h) + var(--safe-bottom) + .5rem) !important;
+  margin-bottom: calc(var(--nav-h) + var(--safe-bottom) + 1rem) !important;
+
+  .mdc-snackbar__surface {
+    background: #ffffff !important;
+    color: var(--text) !important;
+    border-radius: 50px !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,.15) !important;
+    border: 1px solid var(--border) !important;
+    padding: 0 1rem !important;
+    min-width: auto !important;
+    max-width: 90vw !important;
+  }
+  .mdc-snackbar__label {
+    font-family: var(--font) !important;
+    font-weight: 700 !important;
+    font-size: .9rem !important;
+    color: var(--text) !important;
+    text-align: center;
+  }
 
   @media (min-width: 768px) {
-    margin-bottom: 1rem !important;
+    margin-bottom: 2rem !important;
     margin-left: calc(var(--sidebar-w) + 1rem) !important;
   }
 }
