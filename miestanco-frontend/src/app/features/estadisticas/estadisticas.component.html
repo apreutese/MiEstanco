@@ -101,8 +101,8 @@
 
       <!-- PESTAÑA: MONEDAS -->
       @if (activeTab() === 'MONEDAS' && monedas()) {
-        <div class="dashboard-card">
-          <div class="dashboard-card__body">
+        <div class="dashboard-card" style="background: transparent; border: none; box-shadow: none;">
+          <div class="dashboard-card__body" style="padding: 0;">
             @if (monedas()!.length === 0) {
               <div class="empty-state">
                 <mat-icon>money_off</mat-icon>
@@ -113,15 +113,22 @@
                 @for (m of monedas(); track m.monedaId) {
                   <li class="coin-item">
                     <div class="coin-item__left">
-                      <div class="coin-badge">
+                      <div class="coin-badge" 
+                           [class.coin-200]="m.valorCentimos === 200"
+                           [class.coin-100]="m.valorCentimos === 100"
+                           [class.coin-cents]="m.valorCentimos < 100">
                         {{ m.valorCentimos >= 100 ? (m.valorCentimos/100 | number:'1.0-2') + '€' : m.valorCentimos + 'c' }}
                       </div>
-                      <span class="coin-name">
-                        Moneda de {{ m.valorCentimos >= 100 ? (m.valorCentimos/100 | number:'1.0-2') + '€' : m.valorCentimos + 'c' }}
-                      </span>
+                      <div class="coin-info">
+                        <span class="coin-name">
+                          Moneda de {{ m.valorCentimos >= 100 ? (m.valorCentimos/100 | number:'1.0-2') + '€' : m.valorCentimos + 'c' }}
+                        </span>
+                        <span class="coin-sub">Enviadas como cambio</span>
+                      </div>
                     </div>
                     <div class="coin-item__right">
-                      <span class="coin-qty"><strong>{{ m.cantidadEnviada }}</strong> enviadas</span>
+                      <span class="coin-qty-val">{{ m.cantidadEnviada }}</span>
+                      <span class="coin-qty-label">Unidades</span>
                     </div>
                   </li>
                 }
@@ -133,13 +140,11 @@
 
       <!-- PESTAÑA: TOTAL PEDIDOS -->
       @if (activeTab() === 'PEDIDOS' && totalPedidos() !== null) {
-        <div class="dashboard-card">
-          <div class="dashboard-card__body flex-center" style="min-height: 200px;">
-            <div class="total-pedidos-view">
-              <mat-icon class="total-icon">receipt_long</mat-icon>
-              <h2 class="total-number">{{ totalPedidos() }}</h2>
-              <p class="total-label">Pedidos completados en el periodo seleccionado</p>
-            </div>
+        <div class="total-pedidos-card fade-in">
+          <div class="total-pedidos-view">
+            <mat-icon class="total-icon">receipt_long</mat-icon>
+            <h2 class="total-number">{{ totalPedidos() }}</h2>
+            <p class="total-label">Pedidos completados exitosamente en el periodo seleccionado</p>
           </div>
         </div>
       }
