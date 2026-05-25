@@ -30,6 +30,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pedidos/historial.component').then(m => m.HistorialComponent)
       },
       {
+        path: 'estadisticas',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/estadisticas/estadisticas.component').then(m => m.EstadisticasComponent)
+      },
+      {
         path: 'bares',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/bares/bares-list.component').then(m => m.BaresListComponent)

@@ -34,6 +34,7 @@ export class ShellComponent {
   readonly allNav: NavItem[] = [
     { label: 'Pedidos',   icon: 'receipt_long', route: '/pedidos',   bottomBar: true },
     { label: 'Historial', icon: 'history',       route: '/historial', bottomBar: true },
+    { label: 'Estadísticas', icon: 'bar_chart', route: '/estadisticas', adminOnly: true },
     { label: 'Bares',     icon: 'store',         route: '/bares',     adminOnly: true },
     { label: 'Máquinas',  icon: 'point_of_sale', route: '/maquinas',  adminOnly: true },
     { label: 'Productos', icon: 'inventory_2',   route: '/productos', adminOnly: true },

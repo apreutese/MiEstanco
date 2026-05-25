@@ -9,8 +9,8 @@ export class ApiService {
   private readonly BASE = '/api';
   private http = inject(HttpClient);
 
-  get<T>(path: string): Observable<T> {
-    return this.http.get<ApiResponse<T>>(`${this.BASE}/${path}`).pipe(map(r => r.datos));
+  get<T>(path: string, params?: Record<string, string | number | boolean>): Observable<T> {
+    return this.http.get<ApiResponse<T>>(`${this.BASE}/${path}`, { params }).pipe(map(r => r.datos));
   }
 
   post<T>(path: string, body: unknown): Observable<T> {
