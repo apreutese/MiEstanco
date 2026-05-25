@@ -20,8 +20,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.miestanco.dto.response.ApiResponse;
+import org.springframework.http.ResponseEntity;
+
 @RestController
-@RequestMapping("/api/estadisticas")
+@RequestMapping("/estadisticas")
 @RequiredArgsConstructor
 public class EstadisticasController {
 
@@ -30,7 +33,7 @@ public class EstadisticasController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public EstadisticasDto getEstadisticas(
+    public ResponseEntity<ApiResponse<EstadisticasDto>> getEstadisticas(
             @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
             @RequestParam(required = false) Long maquinaId) {
 
@@ -100,13 +103,13 @@ public class EstadisticasController {
             inactivas.sort(Comparator.comparing(EstadisticasDto.MaquinaInactiva::getDiasInactiva).reversed());
         }
 
-        return EstadisticasDto.builder()
+        return ResponseEntity.ok(ApiResponse.ok(EstadisticasDto.builder()
                 .ingresosTotales(ingresosTotales)
                 .monedasEnviadasValor(monedasEnviadas)
                 .totalPedidos(totalPedidos)
                 .topProductos(topProductos)
                 .maquinasInactivas(inactivas)
-                .build();
+                .build()));
     }
 
     private LocalDateTime getFechaDesde(String rango) {
