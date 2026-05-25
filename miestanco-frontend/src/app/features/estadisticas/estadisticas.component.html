@@ -56,52 +56,64 @@
 
     </div>
 
-    <!-- ── DOS COLUMNAS: TOP PRODUCTOS y MÁQUINAS INACTIVAS ── -->
-    <div class="dashboard-cols fade-in">
+    <!-- ── PESTAÑAS (TABS) ── -->
+    <div class="tabs-nav fade-in">
+      <button class="tab-btn" 
+              [class.tab-btn--active]="activeTab() === 'PRODUCTOS'" 
+              (click)="activeTab.set('PRODUCTOS')">
+        <mat-icon>leaderboard</mat-icon> Top Productos
+      </button>
       
-      <!-- COLUMNA IZQUIERDA: Top Productos -->
-      <div class="dashboard-card">
-        <div class="dashboard-card__header">
-          <h2 class="dashboard-card__title">
-            <mat-icon>leaderboard</mat-icon> Top 5 Productos
-          </h2>
-        </div>
-        <div class="dashboard-card__body">
-          @if (stats()!.topProductos.length === 0) {
-            <div class="empty-state">
-              <mat-icon>production_quantity_limits</mat-icon>
-              <p>No hay datos de ventas en este periodo.</p>
-            </div>
-          } @else {
-            <ul class="ranking-list">
-              @for (tp of stats()!.topProductos; track tp.productoId; let idx = $index) {
-                <li class="ranking-item">
-                  <div class="ranking-item__left">
-                    <span class="ranking-pos">{{ idx + 1 }}</span>
-                    <span class="ranking-name">{{ tp.nombre }}</span>
-                  </div>
-                  <div class="ranking-item__right">
-                    <strong>{{ tp.cantidadVendida }}</strong> uds
-                  </div>
-                  <!-- Barra de progreso visual, el ancho depende del % respecto al primero -->
-                  <div class="ranking-bar" 
-                       [style.width.%]="(tp.cantidadVendida / stats()!.topProductos[0].cantidadVendida) * 100">
-                  </div>
-                </li>
-              }
-            </ul>
-          }
-        </div>
-      </div>
-
-      <!-- COLUMNA DERECHA: Alerta Inactividad (Solo si no hay filtro de máquina) -->
+      <!-- Solo mostramos la pestaña de inactividad si no hay máquina seleccionada -->
       @if (maquinaId() === '') {
+        <button class="tab-btn" 
+                [class.tab-btn--active]="activeTab() === 'ALERTAS'" 
+                (click)="activeTab.set('ALERTAS')">
+          <mat-icon>warning</mat-icon> Alertas Máquinas
+          @if (stats()!.maquinasInactivas.length > 0) {
+            <span class="tab-badge">{{ stats()!.maquinasInactivas.length }}</span>
+          }
+        </button>
+      }
+    </div>
+
+    <!-- ── CONTENIDO TABS ── -->
+    <div class="tab-content fade-in">
+      
+      <!-- PESTAÑA: Top Productos -->
+      @if (activeTab() === 'PRODUCTOS') {
         <div class="dashboard-card">
-          <div class="dashboard-card__header">
-            <h2 class="dashboard-card__title">
-              <mat-icon>warning</mat-icon> Alerta de inactividad
-            </h2>
+          <div class="dashboard-card__body">
+            @if (stats()!.topProductos.length === 0) {
+              <div class="empty-state">
+                <mat-icon>production_quantity_limits</mat-icon>
+                <p>No hay datos de ventas en este periodo.</p>
+              </div>
+            } @else {
+              <ul class="ranking-list">
+                @for (tp of stats()!.topProductos; track tp.productoId; let idx = $index) {
+                  <li class="ranking-item">
+                    <div class="ranking-item__left">
+                      <span class="ranking-pos">{{ idx + 1 }}</span>
+                      <span class="ranking-name">{{ tp.nombre }}</span>
+                    </div>
+                    <div class="ranking-item__right">
+                      <strong>{{ tp.cantidadVendida }}</strong> uds
+                    </div>
+                    <div class="ranking-bar" 
+                         [style.width.%]="(tp.cantidadVendida / stats()!.topProductos[0].cantidadVendida) * 100">
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
           </div>
+        </div>
+      }
+
+      <!-- PESTAÑA: Alerta Inactividad -->
+      @if (activeTab() === 'ALERTAS' && maquinaId() === '') {
+        <div class="dashboard-card">
           <div class="dashboard-card__body">
             @if (stats()!.maquinasInactivas.length === 0) {
               <div class="empty-state" style="color: var(--success)">
@@ -109,8 +121,8 @@
                 <p>Todas las máquinas han pedido recientemente (últimos 7 días).</p>
               </div>
             } @else {
-              <p class="text-muted" style="margin-bottom: 1rem; font-size: 0.9rem;">
-                Máquinas que llevan 7 días o más sin realizar un pedido:
+              <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+                Las siguientes máquinas llevan 7 días o más sin realizar un pedido de tabaco:
               </p>
               <ul class="alert-list">
                 @for (mi of stats()!.maquinasInactivas; track mi.maquinaId) {

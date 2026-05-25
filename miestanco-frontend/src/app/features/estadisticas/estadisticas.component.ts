@@ -45,6 +45,9 @@ export class EstadisticasComponent implements OnInit {
   // Filtros
   rangoTiempo = signal<string>('MES'); // HOY, SEMANA, MES, ANO, TODO
   maquinaId = signal<number | ''>('');
+  
+  // Pestañas UI
+  activeTab = signal<'PRODUCTOS' | 'ALERTAS'>('PRODUCTOS');
 
   ngOnInit() {
     this.cargarMaquinas();

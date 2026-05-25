@@ -69,15 +69,60 @@
   }
 }
 
-// ── TWO COLUMNS LAYOUT ──
-.dashboard-cols {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+// ── PESTAÑAS (TABS) ──
+.tabs-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1px;
+}
 
-  @media (min-width: 992px) {
-    grid-template-columns: 1fr 1fr;
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  margin-bottom: -1px; // Para que el borde se superponga
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
+
+  &:hover {
+    color: var(--text);
+  }
+
+  &--active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+}
+
+.tab-badge {
+  background: #DC2626;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 12px;
+  margin-left: 0.25rem;
+}
+
+// ── CONTENIDO TABS ──
+.tab-content {
+  display: block;
 }
 
 .dashboard-card {
@@ -87,28 +132,6 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
   display: flex;
   flex-direction: column;
-
-  &__header {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  &__title {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text);
-    
-    mat-icon {
-      color: var(--primary);
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
-  }
 
   &__body {
     padding: 1.5rem;
