@@ -67,25 +67,38 @@
       <div class="skeleton" style="height: 300px; border-radius: var(--r-md)"></div>
     } @else {
 
-      <!-- PESTAÑA: TOP PRODUCTOS -->
+      <!-- PESTAÑA: PRODUCTOS -->
       @if (activeTab() === 'PRODUCTOS' && topProductos()) {
-        <div class="dashboard-card">
-          <div class="dashboard-card__body">
-            @if (topProductos()!.length === 0) {
+        <div class="pedidos-container fade-in">
+          
+          @if (topProductos()!.rankingGlobal.length === 0) {
+            <div class="dashboard-card" style="background: transparent; border: none; box-shadow: none;">
               <div class="empty-state">
-                <mat-icon>production_quantity_limits</mat-icon>
-                <p>No hay datos de ventas en este periodo.</p>
+                <mat-icon>inventory_2</mat-icon>
+                <p>No hay ventas en este periodo.</p>
               </div>
-            } @else {
+            </div>
+          } @else {
+            <div class="global-total-card">
+              <div class="total-header">
+                <mat-icon class="total-icon">shopping_bag</mat-icon>
+                <h3>Total Global</h3>
+              </div>
+              <div class="total-number">{{ topProductos()!.totalArticulosVendidos }}</div>
+              <div class="total-label">Productos vendidos en total</div>
+            </div>
+
+            <h3 class="pedidos-subtitle">Ranking Global</h3>
+            <div class="dashboard-card" style="padding: 0;">
               <ul class="ranking-list">
-                @for (tp of topProductos(); track tp.productoId; let idx = $index) {
+                @for (p of topProductos()!.rankingGlobal; track p.productoId; let i = $index) {
                   <li class="ranking-item">
                     <div class="ranking-item__left">
-                      <span class="ranking-pos">{{ idx + 1 }}</span>
+                      <span class="ranking-pos">{{ i + 1 }}</span>
                       
                       <div class="ranking-img-container">
-                        @if (tp.fotoUrl) {
-                          <img [src]="tp.fotoUrl" [alt]="tp.nombre" class="ranking-img" />
+                        @if (p.fotoUrl) {
+                          <img [src]="p.fotoUrl" [alt]="p.nombre" class="ranking-img" />
                         } @else {
                           <div class="ranking-img-fallback">
                             <mat-icon>smoking_rooms</mat-icon>
@@ -93,20 +106,52 @@
                         }
                       </div>
 
-                      <span class="ranking-name">{{ tp.nombre }}</span>
+                      <span class="ranking-name">{{ p.nombre }}</span>
                     </div>
                     <div class="ranking-item__right">
-                      <strong>{{ tp.cantidadVendida }}</strong> uds
+                      <strong>{{ p.cantidadVendida }}</strong> uds
                     </div>
-                    <!-- Barra de progreso visual -->
                     <div class="ranking-bar" 
-                         [style.width.%]="(tp.cantidadVendida / topProductos()![0].cantidadVendida) * 100">
+                         [style.width.%]="(p.cantidadVendida / topProductos()!.rankingGlobal[0].cantidadVendida) * 100">
                     </div>
                   </li>
                 }
               </ul>
-            }
-          </div>
+            </div>
+
+            <h3 class="pedidos-subtitle" style="margin-top: 1.5rem;">Desglose por Máquina</h3>
+            <div class="maquinas-monedas-list">
+              @for (maq of topProductos()!.porMaquina; track maq.maquinaId) {
+                <div class="maquina-monedas-card">
+                  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    <h4 class="maquina-monedas-title" style="margin: 0; border: none; padding: 0;">{{ maq.nombreMaquina }}</h4>
+                    <div style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">
+                      {{ maq.totalArticulosVendidos }} uds
+                    </div>
+                  </div>
+                  
+                  <ul class="ranking-list">
+                    @for (p of maq.ranking; track p.productoId; let i = $index) {
+                      @if (i < 5) {
+                        <li class="ranking-item">
+                          <div class="ranking-item__left">
+                            <span class="ranking-pos">{{ i + 1 }}</span>
+                            <span class="ranking-name">{{ p.nombre }}</span>
+                          </div>
+                          <div class="ranking-item__right">
+                            <strong>{{ p.cantidadVendida }}</strong> uds
+                          </div>
+                          <div class="ranking-bar" 
+                               [style.width.%]="(p.cantidadVendida / maq.ranking[0].cantidadVendida) * 100">
+                          </div>
+                        </li>
+                      }
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          }
         </div>
       }
 

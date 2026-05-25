@@ -22,6 +22,26 @@ public class EstadisticasDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
+    public static class ResumenProductosGlobal {
+        private long totalArticulosVendidos;
+        private List<TopProducto> rankingGlobal;
+        private List<ProductosPorMaquina> porMaquina;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ProductosPorMaquina {
+        private Long maquinaId;
+        private String nombreMaquina;
+        private long totalArticulosVendidos;
+        private List<TopProducto> ranking;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class MaquinaInactiva {
         private Long maquinaId;
         private String nombre;

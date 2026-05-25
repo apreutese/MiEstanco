@@ -34,7 +34,7 @@ public class EstadisticasController {
 
     @GetMapping("/top-productos")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<EstadisticasDto.TopProducto>>> getTopProductos(
+    public ResponseEntity<ApiResponse<EstadisticasDto.ResumenProductosGlobal>> getTopProductos(
             @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
             @RequestParam(required = false) Long maquinaId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
@@ -52,25 +52,70 @@ public class EstadisticasController {
 
         List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, hasta);
 
-        Map<Long, EstadisticasDto.TopProducto> productosMap = new HashMap<>();
+        long totalArticulosVendidos = 0;
+        Map<Long, EstadisticasDto.TopProducto> productosGlobalMap = new HashMap<>();
+        
+        // Map: MaquinaId -> (Map: ProductoId -> TopProducto)
+        Map<Long, Map<Long, EstadisticasDto.TopProducto>> maquinaProductosMap = new HashMap<>();
+        Map<Long, String> maquinaNombres = new HashMap<>();
 
         for (Pedido p : pedidos) {
+            Long mId = p.getMaquina().getId();
+            String mNombre = p.getMaquina().getNombre();
+            maquinaNombres.put(mId, mNombre);
+            
+            maquinaProductosMap.putIfAbsent(mId, new HashMap<>());
+            Map<Long, EstadisticasDto.TopProducto> maqMap = maquinaProductosMap.get(mId);
+
             for (LineaPedidoProducto lp : p.getLineasProducto()) {
                 Long pId = lp.getProducto().getId();
                 String pNombre = lp.getProducto().getNombre();
-                String pFotoUrl = lp.getProducto().getFotoUrl();
-                productosMap.putIfAbsent(pId, new EstadisticasDto.TopProducto(pId, pNombre, pFotoUrl, 0));
-                productosMap.get(pId).setCantidadVendida(
-                    productosMap.get(pId).getCantidadVendida() + lp.getCantidad()
+                String pUrl = lp.getProducto().getFotoUrl();
+                long cant = lp.getCantidad();
+                
+                totalArticulosVendidos += cant;
+
+                // Acumular global
+                productosGlobalMap.putIfAbsent(pId, new EstadisticasDto.TopProducto(pId, pNombre, pUrl, 0));
+                productosGlobalMap.get(pId).setCantidadVendida(
+                    productosGlobalMap.get(pId).getCantidadVendida() + cant
+                );
+                
+                // Acumular por máquina
+                maqMap.putIfAbsent(pId, new EstadisticasDto.TopProducto(pId, pNombre, pUrl, 0));
+                maqMap.get(pId).setCantidadVendida(
+                    maqMap.get(pId).getCantidadVendida() + cant
                 );
             }
         }
 
-        List<EstadisticasDto.TopProducto> top = productosMap.values().stream()
+        List<EstadisticasDto.TopProducto> rankingGlobal = productosGlobalMap.values().stream()
                 .sorted(Comparator.comparing(EstadisticasDto.TopProducto::getCantidadVendida).reversed())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(ApiResponse.ok(top));
+        List<EstadisticasDto.ProductosPorMaquina> porMaquina = new ArrayList<>();
+        for (Map.Entry<Long, Map<Long, EstadisticasDto.TopProducto>> entry : maquinaProductosMap.entrySet()) {
+            Long mId = entry.getKey();
+            List<EstadisticasDto.TopProducto> maqRanking = entry.getValue().values().stream()
+                    .sorted(Comparator.comparing(EstadisticasDto.TopProducto::getCantidadVendida).reversed())
+                    .collect(Collectors.toList());
+            
+            long totalMaq = maqRanking.stream().mapToLong(EstadisticasDto.TopProducto::getCantidadVendida).sum();
+            
+            porMaquina.add(new EstadisticasDto.ProductosPorMaquina(
+                mId, maquinaNombres.get(mId), totalMaq, maqRanking
+            ));
+        }
+
+        porMaquina.sort(Comparator.comparing(EstadisticasDto.ProductosPorMaquina::getNombreMaquina));
+
+        EstadisticasDto.ResumenProductosGlobal result = EstadisticasDto.ResumenProductosGlobal.builder()
+                .totalArticulosVendidos(totalArticulosVendidos)
+                .rankingGlobal(rankingGlobal)
+                .porMaquina(porMaquina)
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 
     @GetMapping("/monedas")

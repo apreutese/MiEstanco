@@ -8,8 +8,21 @@ import { Maquina } from '../../core/models/models';
 export interface TopProducto {
   productoId: number;
   nombre: string;
-  fotoUrl?: string;
+  fotoUrl: string;
   cantidadVendida: number;
+}
+
+export interface ResumenProductosGlobal {
+  totalArticulosVendidos: number;
+  rankingGlobal: TopProducto[];
+  porMaquina: ProductosPorMaquina[];
+}
+
+export interface ProductosPorMaquina {
+  maquinaId: number;
+  nombreMaquina: string;
+  totalArticulosVendidos: number;
+  ranking: TopProducto[];
 }
 
 export interface MaquinaInactiva {
@@ -73,7 +86,7 @@ export class EstadisticasComponent implements OnInit {
   maquinaId = signal<string>('');
 
   // Datos de cada pestaña
-  topProductos = signal<TopProducto[] | null>(null);
+  topProductos = signal<ResumenProductosGlobal | null>(null);
   monedas = signal<ResumenMonedasGlobal | null>(null);
   totalPedidos = signal<ResumenPedidos | null>(null);
   alertas = signal<MaquinaInactiva[] | null>(null);
@@ -118,7 +131,7 @@ export class EstadisticasComponent implements OnInit {
     }
 
     if (tab === 'PRODUCTOS') {
-      this.api.get<TopProducto[]>('estadisticas/top-productos', params).subscribe({
+      this.api.get<ResumenProductosGlobal>('estadisticas/top-productos', params).subscribe({
         next: (data) => { this.topProductos.set(data); this.loading.set(false); },
         error: () => this.loading.set(false)
       });
