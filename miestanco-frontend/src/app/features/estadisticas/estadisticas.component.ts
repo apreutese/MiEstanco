@@ -27,6 +27,17 @@ export interface ResumenMoneda {
 
 type TabType = 'PRODUCTOS' | 'MONEDAS' | 'PEDIDOS' | 'ALERTAS';
 
+export interface ResumenPedidos {
+  totalGlobal: number;
+  porMaquina: PedidosPorMaquina[];
+}
+
+export interface PedidosPorMaquina {
+  maquinaId: number;
+  nombreMaquina: string;
+  totalPedidos: number;
+}
+
 @Component({
   selector: 'app-estadisticas',
   standalone: true,
@@ -51,7 +62,7 @@ export class EstadisticasComponent implements OnInit {
   // Datos de cada pestaña
   topProductos = signal<TopProducto[] | null>(null);
   monedas = signal<ResumenMoneda[] | null>(null);
-  totalPedidos = signal<number | null>(null);
+  totalPedidos = signal<ResumenPedidos | null>(null);
   alertas = signal<MaquinaInactiva[] | null>(null);
 
   constructor() {
@@ -78,7 +89,9 @@ export class EstadisticasComponent implements OnInit {
   private cargarDatos(tab: TabType, rango: string, maq: string) {
     this.loading.set(true);
     let params: Record<string, string | number> = { rangoTiempo: rango };
-    if (maq !== '') params['maquinaId'] = maq; // maq ya es string, la API lo convierte a número automáticamente
+    if (maq !== '' && tab !== 'PEDIDOS') { // La pestaña de pedidos ignora el filtro de máquina global
+      params['maquinaId'] = maq;
+    }
 
     if (tab === 'PRODUCTOS') {
       this.api.get<TopProducto[]>('estadisticas/top-productos', params).subscribe({
@@ -91,7 +104,7 @@ export class EstadisticasComponent implements OnInit {
         error: () => this.loading.set(false)
       });
     } else if (tab === 'PEDIDOS') {
-      this.api.get<number>('estadisticas/pedidos', params).subscribe({
+      this.api.get<ResumenPedidos>('estadisticas/pedidos', params).subscribe({
         next: (data) => { this.totalPedidos.set(data); this.loading.set(false); },
         error: () => this.loading.set(false)
       });

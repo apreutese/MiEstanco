@@ -136,13 +136,34 @@
       }
 
       <!-- PESTAÑA: TOTAL PEDIDOS -->
-      @if (activeTab() === 'PEDIDOS' && totalPedidos() !== null) {
-        <div class="total-pedidos-card fade-in">
-          <div class="total-pedidos-view">
-            <mat-icon class="total-icon">receipt_long</mat-icon>
-            <h2 class="total-number">{{ totalPedidos() }}</h2>
-            <p class="total-label">Pedidos completados exitosamente en el periodo seleccionado</p>
+      @if (activeTab() === 'PEDIDOS' && totalPedidos()) {
+        <div class="pedidos-container fade-in">
+          
+          <div class="pedidos-global">
+            <mat-icon class="pedidos-icon">receipt_long</mat-icon>
+            <div class="pedidos-global-info">
+              <span class="pedidos-label">Total Global</span>
+              <span class="pedidos-number">{{ totalPedidos()!.totalGlobal }}</span>
+            </div>
           </div>
+
+          <h3 class="pedidos-subtitle">Desglose por Máquina</h3>
+          
+          <ul class="pedidos-list">
+            @for (m of totalPedidos()!.porMaquina; track m.maquinaId; let idx = $index) {
+              <li class="pedidos-item">
+                <div class="pedidos-item-left">
+                  <span class="pedidos-pos">{{ idx + 1 }}</span>
+                  <span class="pedidos-machine">{{ m.nombreMaquina }}</span>
+                </div>
+                <div class="pedidos-item-right">
+                  <span class="pedidos-qty">{{ m.totalPedidos }}</span>
+                  <span class="pedidos-qty-label">pedidos</span>
+                </div>
+              </li>
+            }
+          </ul>
+
         </div>
       }
 

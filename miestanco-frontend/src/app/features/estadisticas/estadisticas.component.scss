@@ -243,60 +243,124 @@
   }
 }
 
-// ── TOTAL PEDIDOS ──
-.total-pedidos-card {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-  border-radius: var(--r-lg);
-  color: white;
-  padding: 4rem 2rem;
-  box-shadow: 0 15px 35px rgba(79, 70, 229, 0.25);
+// ── TOTAL PEDIDOS (SIMPLIFICADO) ──
+.pedidos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pedidos-global {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
-    pointer-events: none;
+  .pedidos-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--primary);
+  }
+
+  .pedidos-global-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pedidos-label {
+    font-size: 1rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .pedidos-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
   }
 }
 
-.total-pedidos-view {
-  position: relative;
-  z-index: 1;
+.pedidos-subtitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.pedidos-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pedidos-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  text-align: center;
+  padding: 1rem 1.25rem;
+  background: var(--bg);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease;
 
-  .total-icon {
-    font-size: 64px;
-    width: 64px;
-    height: 64px;
-    color: rgba(255,255,255,0.9);
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+  &:hover {
+    transform: translateX(4px);
+    border-color: var(--primary);
   }
 
-  .total-number {
-    font-size: 5.5rem;
-    font-weight: 900;
-    margin: 0;
-    line-height: 1;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    letter-spacing: -2px;
+  &-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
-  .total-label {
-    font-size: 1.25rem;
-    font-weight: 500;
-    opacity: 0.9;
-    margin: 0;
-    max-width: 300px;
+  .pedidos-pos {
+    width: 28px;
+    height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  .pedidos-machine {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  &-right {
+    text-align: right;
+
+    .pedidos-qty {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-right: 0.3rem;
+    }
+
+    .pedidos-qty-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
   }
 }
 

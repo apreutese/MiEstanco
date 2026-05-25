@@ -37,4 +37,22 @@ public class EstadisticasDto {
         private int valorCentimos;
         private long cantidadEnviada;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ResumenPedidos {
+        private int totalGlobal;
+        private List<PedidosPorMaquina> porMaquina;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PedidosPorMaquina {
+        private Long maquinaId;
+        private String nombreMaquina;
+        private int totalPedidos;
+    }
 }

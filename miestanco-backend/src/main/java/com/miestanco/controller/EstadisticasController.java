@@ -91,14 +91,32 @@ public class EstadisticasController {
 
     @GetMapping("/pedidos")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Integer>> getTotalPedidos(
-            @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
-            @RequestParam(required = false) Long maquinaId) {
+    public ResponseEntity<ApiResponse<EstadisticasDto.ResumenPedidos>> getTotalPedidos(
+            @RequestParam(required = false, defaultValue = "MES") String rangoTiempo) {
 
+        // Ya no recibimos maquinaId porque la pestaña listará todas las máquinas
         LocalDateTime desde = getFechaDesde(rangoTiempo);
-        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, LocalDateTime.now());
+        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, null, desde, LocalDateTime.now());
 
-        return ResponseEntity.ok(ApiResponse.ok(pedidos.size()));
+        Map<Long, EstadisticasDto.PedidosPorMaquina> map = new HashMap<>();
+        
+        for (Pedido p : pedidos) {
+            Long mId = p.getMaquina().getId();
+            String mNombre = p.getMaquina().getNombre();
+            map.putIfAbsent(mId, new EstadisticasDto.PedidosPorMaquina(mId, mNombre, 0));
+            map.get(mId).setTotalPedidos(map.get(mId).getTotalPedidos() + 1);
+        }
+
+        List<EstadisticasDto.PedidosPorMaquina> desglose = map.values().stream()
+                .sorted(Comparator.comparing(EstadisticasDto.PedidosPorMaquina::getTotalPedidos).reversed())
+                .collect(Collectors.toList());
+
+        EstadisticasDto.ResumenPedidos resumen = EstadisticasDto.ResumenPedidos.builder()
+                .totalGlobal(pedidos.size())
+                .porMaquina(desglose)
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.ok(resumen));
     }
 
     @GetMapping("/alertas")
