@@ -55,13 +55,17 @@ export class MaquinasListComponent implements OnInit {
   
   readonly productosFiltradosModal = computed(() => {
     const q = this.busquedaProductosModal().toLowerCase();
-    return this.productos().filter(p => !q || p.nombre.toLowerCase().includes(q));
+    return this.productos().filter(p => {
+      const matchesSearch = !q || p.nombre.toLowerCase().includes(q);
+      const isVisible = p.activo || this.productosSeleccionados().has(p.id);
+      return matchesSearch && isVisible;
+    });
   });
 
   ngOnInit() {
     this.cargar();
     this.barSvc.listar().subscribe(b => { this.bares.set(b.filter(x => x.activo)); this.cdr.markForCheck(); });
-    this.prodSvc.listar().subscribe(p => { this.productos.set(p.filter(x => x.activo)); this.cdr.markForCheck(); });
+    this.prodSvc.listar().subscribe(p => { this.productos.set(p); this.cdr.markForCheck(); });
     this.apiSvc.get<Moneda[]>('monedas').subscribe(m => { this.monedas.set(m); this.cdr.markForCheck(); });
   }
 
