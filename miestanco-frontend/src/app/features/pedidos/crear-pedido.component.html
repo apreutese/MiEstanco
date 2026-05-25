@@ -167,6 +167,10 @@
                 <span class="cp-item__sub">{{ (linea.moneda.valorCentimos / 100) | number:'1.2-2' }}€/ud</span>
               </div>
               <div class="cp-item__ctrl">
+                <button class="cp-carton-btn cp-carton-btn--minus"
+                        [disabled]="linea.cantidad < 10"
+                        (click)="setCantidadMoneda(i, linea.cantidad - 10)"
+                        [id]="'btn-menos10-mon-' + i">-10</button>
                 <button class="cp-qty-btn cp-qty-btn--minus"
                         [disabled]="linea.cantidad === 0"
                         (click)="setCantidadMoneda(i, linea.cantidad - 1)"
