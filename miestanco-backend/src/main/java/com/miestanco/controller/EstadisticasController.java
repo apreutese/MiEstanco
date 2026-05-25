@@ -45,7 +45,8 @@ public class EstadisticasController {
             for (LineaPedidoProducto lp : p.getLineasProducto()) {
                 Long pId = lp.getProducto().getId();
                 String pNombre = lp.getProducto().getNombre();
-                productosMap.putIfAbsent(pId, new EstadisticasDto.TopProducto(pId, pNombre, 0));
+                String pFotoUrl = lp.getProducto().getFotoUrl();
+                productosMap.putIfAbsent(pId, new EstadisticasDto.TopProducto(pId, pNombre, pFotoUrl, 0));
                 productosMap.get(pId).setCantidadVendida(
                     productosMap.get(pId).getCantidadVendida() + lp.getCantidad()
                 );

@@ -71,6 +71,17 @@
                   <li class="ranking-item">
                     <div class="ranking-item__left">
                       <span class="ranking-pos">{{ idx + 1 }}</span>
+                      
+                      <div class="ranking-img-container">
+                        @if (tp.fotoUrl) {
+                          <img [src]="tp.fotoUrl" [alt]="tp.nombre" class="ranking-img" />
+                        } @else {
+                          <div class="ranking-img-fallback">
+                            <mat-icon>smoking_rooms</mat-icon>
+                          </div>
+                        }
+                      </div>
+
                       <span class="ranking-name">{{ tp.nombre }}</span>
                     </div>
                     <div class="ranking-item__right">

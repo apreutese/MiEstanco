@@ -15,6 +15,7 @@ public class EstadisticasDto {
     public static class TopProducto {
         private Long productoId;
         private String nombre;
+        private String fotoUrl;
         private long cantidadVendida;
     }
 

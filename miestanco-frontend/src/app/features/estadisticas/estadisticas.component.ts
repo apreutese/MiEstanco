@@ -8,6 +8,7 @@ import { Maquina } from '../../core/models/models';
 export interface TopProducto {
   productoId: number;
   nombre: string;
+  fotoUrl?: string;
   cantidadVendida: number;
 }
 
