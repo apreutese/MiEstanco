@@ -1,6 +1,7 @@
 package com.miestanco.controller;
 
 import com.miestanco.dto.EstadisticasDto;
+import com.miestanco.dto.response.ApiResponse;
 import com.miestanco.enums.EstadoPedido;
 import com.miestanco.model.Maquina;
 import com.miestanco.model.Pedido;
@@ -9,6 +10,7 @@ import com.miestanco.model.LineaPedidoMoneda;
 import com.miestanco.repository.MaquinaRepository;
 import com.miestanco.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.miestanco.dto.response.ApiResponse;
-import org.springframework.http.ResponseEntity;
-
 @RestController
 @RequestMapping("/estadisticas")
 @RequiredArgsConstructor
@@ -31,31 +30,19 @@ public class EstadisticasController {
     private final PedidoRepository pedidoRepository;
     private final MaquinaRepository maquinaRepository;
 
-    @GetMapping
+    @GetMapping("/top-productos")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<EstadisticasDto>> getEstadisticas(
+    public ResponseEntity<ApiResponse<List<EstadisticasDto.TopProducto>>> getTopProductos(
             @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
             @RequestParam(required = false) Long maquinaId) {
 
         LocalDateTime desde = getFechaDesde(rangoTiempo);
-        LocalDateTime hasta = LocalDateTime.now();
+        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, LocalDateTime.now());
 
-        // 1. Obtener pedidos (filtrados por fecha y máquina opcional)
-        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, hasta);
-
-        double ingresosTotales = 0;
-        double monedasEnviadas = 0;
-        int totalPedidos = pedidos.size();
-        
         Map<Long, EstadisticasDto.TopProducto> productosMap = new HashMap<>();
 
         for (Pedido p : pedidos) {
-            // Sumar ingresos de productos
             for (LineaPedidoProducto lp : p.getLineasProducto()) {
-                double sub = lp.getCantidad() * lp.getPrecioUnitario().doubleValue();
-                ingresosTotales += sub;
-                
-                // Acumular cantidad vendida
                 Long pId = lp.getProducto().getId();
                 String pNombre = lp.getProducto().getNombre();
                 productosMap.putIfAbsent(pId, new EstadisticasDto.TopProducto(pId, pNombre, 0));
@@ -63,53 +50,84 @@ public class EstadisticasController {
                     productosMap.get(pId).getCantidadVendida() + lp.getCantidad()
                 );
             }
-
-            // Sumar monedas
-            for (LineaPedidoMoneda lm : p.getLineasMoneda()) {
-                double sub = (lm.getCantidad() * lm.getMoneda().getValorCentimos()) / 100.0;
-                monedasEnviadas += sub;
-            }
         }
 
-        // Ordenar productos top 5
-        List<EstadisticasDto.TopProducto> topProductos = productosMap.values().stream()
+        List<EstadisticasDto.TopProducto> top = productosMap.values().stream()
                 .sorted(Comparator.comparing(EstadisticasDto.TopProducto::getCantidadVendida).reversed())
                 .limit(5)
                 .collect(Collectors.toList());
 
-        // 2. Obtener inactividad de máquinas (solo si maquinaId no está presente)
-        List<EstadisticasDto.MaquinaInactiva> inactivas = new ArrayList<>();
-        if (maquinaId == null) {
-            List<Maquina> todas = maquinaRepository.findAll().stream()
-                    .filter(m -> Boolean.TRUE.equals(m.getActiva()))
-                    .toList();
-                    
-            for (Maquina m : todas) {
-                Optional<Pedido> ultimo = pedidoRepository.findFirstByMaquina_IdOrderByFechaCreacionDesc(m.getId());
-                long dias = -1;
-                if (ultimo.isPresent()) {
-                    dias = ChronoUnit.DAYS.between(ultimo.get().getFechaCreacion(), LocalDateTime.now());
-                } else {
-                    dias = 999; // Nunca ha pedido
-                }
-                
-                if (dias >= 7) { // Mostrar si lleva >= 7 dias inactiva
-                    inactivas.add(new EstadisticasDto.MaquinaInactiva(
-                        m.getId(), m.getNombre(), m.getBar().getNombre(), dias
-                    ));
-                }
+        return ResponseEntity.ok(ApiResponse.ok(top));
+    }
+
+    @GetMapping("/monedas")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<EstadisticasDto.ResumenMoneda>>> getMonedasEnviadas(
+            @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
+            @RequestParam(required = false) Long maquinaId) {
+
+        LocalDateTime desde = getFechaDesde(rangoTiempo);
+        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, LocalDateTime.now());
+
+        Map<Long, EstadisticasDto.ResumenMoneda> monedasMap = new HashMap<>();
+
+        for (Pedido p : pedidos) {
+            for (LineaPedidoMoneda lm : p.getLineasMoneda()) {
+                Long mId = lm.getMoneda().getId();
+                int mValor = lm.getMoneda().getValorCentimos();
+                monedasMap.putIfAbsent(mId, new EstadisticasDto.ResumenMoneda(mId, mValor, 0));
+                monedasMap.get(mId).setCantidadEnviada(
+                    monedasMap.get(mId).getCantidadEnviada() + lm.getCantidad()
+                );
             }
-            
-            inactivas.sort(Comparator.comparing(EstadisticasDto.MaquinaInactiva::getDiasInactiva).reversed());
         }
 
-        return ResponseEntity.ok(ApiResponse.ok(EstadisticasDto.builder()
-                .ingresosTotales(ingresosTotales)
-                .monedasEnviadasValor(monedasEnviadas)
-                .totalPedidos(totalPedidos)
-                .topProductos(topProductos)
-                .maquinasInactivas(inactivas)
-                .build()));
+        List<EstadisticasDto.ResumenMoneda> result = monedasMap.values().stream()
+                .sorted(Comparator.comparing(EstadisticasDto.ResumenMoneda::getValorCentimos).reversed())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(ApiResponse.ok(result));
+    }
+
+    @GetMapping("/pedidos")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Integer>> getTotalPedidos(
+            @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
+            @RequestParam(required = false) Long maquinaId) {
+
+        LocalDateTime desde = getFechaDesde(rangoTiempo);
+        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, LocalDateTime.now());
+
+        return ResponseEntity.ok(ApiResponse.ok(pedidos.size()));
+    }
+
+    @GetMapping("/alertas")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<EstadisticasDto.MaquinaInactiva>>> getAlertas() {
+        
+        List<EstadisticasDto.MaquinaInactiva> inactivas = new ArrayList<>();
+        List<Maquina> todas = maquinaRepository.findAll().stream()
+                .filter(m -> Boolean.TRUE.equals(m.getActiva()))
+                .toList();
+                
+        for (Maquina m : todas) {
+            Optional<Pedido> ultimo = pedidoRepository.findFirstByMaquina_IdOrderByFechaCreacionDesc(m.getId());
+            long dias = -1;
+            if (ultimo.isPresent()) {
+                dias = ChronoUnit.DAYS.between(ultimo.get().getFechaCreacion(), LocalDateTime.now());
+            } else {
+                dias = 999;
+            }
+            
+            if (dias >= 7) {
+                inactivas.add(new EstadisticasDto.MaquinaInactiva(
+                    m.getId(), m.getNombre(), m.getBar().getNombre(), dias
+                ));
+            }
+        }
+        
+        inactivas.sort(Comparator.comparing(EstadisticasDto.MaquinaInactiva::getDiasInactiva).reversed());
+        return ResponseEntity.ok(ApiResponse.ok(inactivas));
     }
 
     private LocalDateTime getFechaDesde(String rango) {

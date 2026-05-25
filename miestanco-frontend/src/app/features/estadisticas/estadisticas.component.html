@@ -2,11 +2,38 @@
   <div class="page-header">
     <div class="page-header__left">
       <h1 class="page-title">Estadísticas</h1>
-      <span class="page-count">Dashboard</span>
+      <span class="page-count">Dashboard interactivo</span>
     </div>
-    <div class="page-header__actions">
-      <!-- Filtro Rango de Tiempo -->
-      <select class="form-select" [value]="rangoTiempo()" (change)="cambiarRango($event)">
+  </div>
+
+  <!-- ── PESTAÑAS (TABS NAV) ── -->
+  <div class="tabs-nav fade-in" style="overflow-x: auto;">
+    <button class="tab-btn" 
+            [class.tab-btn--active]="activeTab() === 'PRODUCTOS'" 
+            (click)="activeTab.set('PRODUCTOS')">
+      <mat-icon>leaderboard</mat-icon> Top Productos
+    </button>
+    <button class="tab-btn" 
+            [class.tab-btn--active]="activeTab() === 'MONEDAS'" 
+            (click)="activeTab.set('MONEDAS')">
+      <mat-icon>paid</mat-icon> Cambio (Monedas)
+    </button>
+    <button class="tab-btn" 
+            [class.tab-btn--active]="activeTab() === 'PEDIDOS'" 
+            (click)="activeTab.set('PEDIDOS')">
+      <mat-icon>receipt_long</mat-icon> Total Pedidos
+    </button>
+    <button class="tab-btn" 
+            [class.tab-btn--active]="activeTab() === 'ALERTAS'" 
+            (click)="activeTab.set('ALERTAS')">
+      <mat-icon>warning</mat-icon> Alertas Máquinas
+    </button>
+  </div>
+
+  <!-- ── ZONA DE FILTROS (Solo para pestañas que lo soportan) ── -->
+  @if (activeTab() !== 'ALERTAS') {
+    <div class="filters-bar fade-in">
+      <select class="form-select form-select--inline" [value]="rangoTiempo()" (change)="cambiarRango($event)">
         <option value="HOY">Hoy</option>
         <option value="SEMANA">Últimos 7 días</option>
         <option value="MES">Último mes</option>
@@ -14,84 +41,33 @@
         <option value="TODO">Histórico completo</option>
       </select>
 
-      <!-- Filtro Máquina -->
-      <select class="form-select" [value]="maquinaId()" (change)="cambiarMaquina($event)">
+      <select class="form-select form-select--inline" [value]="maquinaId()" (change)="cambiarMaquina($event)">
         <option value="">Todas las máquinas</option>
         @for (m of maquinas(); track m.id) {
           <option [value]="m.id">{{ m.nombre }}</option>
         }
       </select>
     </div>
-  </div>
+  }
 
-  @if (loading()) {
-    <div class="skeleton" style="height: 100px; margin-bottom:1rem; border-radius: var(--r-md)"></div>
-    <div class="skeleton" style="height: 300px; border-radius: var(--r-md)"></div>
-  } @else if (stats()) {
-    
-    <!-- ── KPI CARDS ── -->
-    <div class="kpi-grid fade-in">
-      
+  <!-- ── CONTENIDO TABS ── -->
+  <div class="tab-content fade-in">
+    @if (loading()) {
+      <div class="skeleton" style="height: 300px; border-radius: var(--r-md)"></div>
+    } @else {
 
-
-      <div class="kpi-card">
-        <div class="kpi-card__icon kpi-card__icon--green">
-          <mat-icon>paid</mat-icon>
-        </div>
-        <div class="kpi-card__info">
-          <span class="kpi-card__label">Cambio Enviado (Monedas)</span>
-          <span class="kpi-card__value">{{ stats()!.monedasEnviadasValor | number:'1.2-2' }}€</span>
-        </div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-card__icon kpi-card__icon--purple">
-          <mat-icon>receipt_long</mat-icon>
-        </div>
-        <div class="kpi-card__info">
-          <span class="kpi-card__label">Total Pedidos</span>
-          <span class="kpi-card__value">{{ stats()!.totalPedidos }}</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ── PESTAÑAS (TABS) ── -->
-    <div class="tabs-nav fade-in">
-      <button class="tab-btn" 
-              [class.tab-btn--active]="activeTab() === 'PRODUCTOS'" 
-              (click)="activeTab.set('PRODUCTOS')">
-        <mat-icon>leaderboard</mat-icon> Top Productos
-      </button>
-      
-      <!-- Solo mostramos la pestaña de inactividad si no hay máquina seleccionada -->
-      @if (maquinaId() === '') {
-        <button class="tab-btn" 
-                [class.tab-btn--active]="activeTab() === 'ALERTAS'" 
-                (click)="activeTab.set('ALERTAS')">
-          <mat-icon>warning</mat-icon> Alertas Máquinas
-          @if (stats()!.maquinasInactivas.length > 0) {
-            <span class="tab-badge">{{ stats()!.maquinasInactivas.length }}</span>
-          }
-        </button>
-      }
-    </div>
-
-    <!-- ── CONTENIDO TABS ── -->
-    <div class="tab-content fade-in">
-      
-      <!-- PESTAÑA: Top Productos -->
-      @if (activeTab() === 'PRODUCTOS') {
+      <!-- PESTAÑA: TOP PRODUCTOS -->
+      @if (activeTab() === 'PRODUCTOS' && topProductos()) {
         <div class="dashboard-card">
           <div class="dashboard-card__body">
-            @if (stats()!.topProductos.length === 0) {
+            @if (topProductos()!.length === 0) {
               <div class="empty-state">
                 <mat-icon>production_quantity_limits</mat-icon>
                 <p>No hay datos de ventas en este periodo.</p>
               </div>
             } @else {
               <ul class="ranking-list">
-                @for (tp of stats()!.topProductos; track tp.productoId; let idx = $index) {
+                @for (tp of topProductos(); track tp.productoId; let idx = $index) {
                   <li class="ranking-item">
                     <div class="ranking-item__left">
                       <span class="ranking-pos">{{ idx + 1 }}</span>
@@ -100,8 +76,9 @@
                     <div class="ranking-item__right">
                       <strong>{{ tp.cantidadVendida }}</strong> uds
                     </div>
+                    <!-- Barra de progreso visual -->
                     <div class="ranking-bar" 
-                         [style.width.%]="(tp.cantidadVendida / stats()!.topProductos[0].cantidadVendida) * 100">
+                         [style.width.%]="(tp.cantidadVendida / topProductos()![0].cantidadVendida) * 100">
                     </div>
                   </li>
                 }
@@ -111,21 +88,66 @@
         </div>
       }
 
-      <!-- PESTAÑA: Alerta Inactividad -->
-      @if (activeTab() === 'ALERTAS' && maquinaId() === '') {
+      <!-- PESTAÑA: MONEDAS -->
+      @if (activeTab() === 'MONEDAS' && monedas()) {
         <div class="dashboard-card">
           <div class="dashboard-card__body">
-            @if (stats()!.maquinasInactivas.length === 0) {
+            @if (monedas()!.length === 0) {
+              <div class="empty-state">
+                <mat-icon>money_off</mat-icon>
+                <p>No se enviaron monedas en este periodo.</p>
+              </div>
+            } @else {
+              <ul class="coin-list">
+                @for (m of monedas(); track m.monedaId) {
+                  <li class="coin-item">
+                    <div class="coin-item__left">
+                      <div class="coin-badge">
+                        {{ m.valorCentimos >= 100 ? (m.valorCentimos/100 | number:'1.0-2') + '€' : m.valorCentimos + 'c' }}
+                      </div>
+                      <span class="coin-name">
+                        Moneda de {{ m.valorCentimos >= 100 ? (m.valorCentimos/100 | number:'1.0-2') + '€' : m.valorCentimos + 'c' }}
+                      </span>
+                    </div>
+                    <div class="coin-item__right">
+                      <span class="coin-qty"><strong>{{ m.cantidadEnviada }}</strong> enviadas</span>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- PESTAÑA: TOTAL PEDIDOS -->
+      @if (activeTab() === 'PEDIDOS' && totalPedidos() !== null) {
+        <div class="dashboard-card">
+          <div class="dashboard-card__body flex-center" style="min-height: 200px;">
+            <div class="total-pedidos-view">
+              <mat-icon class="total-icon">receipt_long</mat-icon>
+              <h2 class="total-number">{{ totalPedidos() }}</h2>
+              <p class="total-label">Pedidos completados en el periodo seleccionado</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- PESTAÑA: ALERTAS -->
+      @if (activeTab() === 'ALERTAS' && alertas()) {
+        <div class="dashboard-card">
+          <div class="dashboard-card__body">
+            @if (alertas()!.length === 0) {
               <div class="empty-state" style="color: var(--success)">
                 <mat-icon>check_circle</mat-icon>
-                <p>Todas las máquinas han pedido recientemente (últimos 7 días).</p>
+                <p>Todas las máquinas activas han pedido recientemente (últimos 7 días).</p>
               </div>
             } @else {
               <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">
                 Las siguientes máquinas llevan 7 días o más sin realizar un pedido de tabaco:
               </p>
               <ul class="alert-list">
-                @for (mi of stats()!.maquinasInactivas; track mi.maquinaId) {
+                @for (mi of alertas(); track mi.maquinaId) {
                   <li class="alert-item">
                     <div class="alert-item__icon">
                       <mat-icon>hourglass_disabled</mat-icon>
@@ -144,7 +166,7 @@
           </div>
         </div>
       }
-    </div>
 
-  }
+    }
+  </div>
 </div>

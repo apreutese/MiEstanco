@@ -7,21 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class EstadisticasDto {
-
-    private double ingresosTotales;
-    private double monedasEnviadasValor;
-    private int totalPedidos;
-
-    private List<TopProducto> topProductos;
-    private List<MaquinaInactiva> maquinasInactivas;
 
     @Data
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class TopProducto {
         private Long productoId;
         private String nombre;
@@ -30,10 +20,20 @@ public class EstadisticasDto {
 
     @Data
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class MaquinaInactiva {
         private Long maquinaId;
         private String nombre;
         private String barNombre;
         private Long diasInactiva;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ResumenMoneda {
+        private Long monedaId;
+        private int valorCentimos;
+        private long cantidadEnviada;
     }
 }

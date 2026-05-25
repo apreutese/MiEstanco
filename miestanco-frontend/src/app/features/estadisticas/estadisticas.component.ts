@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy, EffectRef, effect } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,13 +18,13 @@ export interface MaquinaInactiva {
   diasInactiva: number;
 }
 
-export interface EstadisticasDto {
-  ingresosTotales: number;
-  monedasEnviadasValor: number;
-  totalPedidos: number;
-  topProductos: TopProducto[];
-  maquinasInactivas: MaquinaInactiva[];
+export interface ResumenMoneda {
+  monedaId: number;
+  valorCentimos: number;
+  cantidadEnviada: number;
 }
+
+type TabType = 'PRODUCTOS' | 'MONEDAS' | 'PEDIDOS' | 'ALERTAS';
 
 @Component({
   selector: 'app-estadisticas',
@@ -37,21 +37,35 @@ export interface EstadisticasDto {
 export class EstadisticasComponent implements OnInit {
   private api = inject(ApiService);
 
-  stats = signal<EstadisticasDto | null>(null);
-  loading = signal(true);
-  
   maquinas = signal<Maquina[]>([]);
-  
-  // Filtros
-  rangoTiempo = signal<string>('MES'); // HOY, SEMANA, MES, ANO, TODO
+  activeTab = signal<TabType>('PRODUCTOS');
+
+  // Estados de carga por pestaña
+  loading = signal(false);
+
+  // Filtros (cada pestaña puede usar los mismos campos en HTML pero unidos a estos signals)
+  rangoTiempo = signal<string>('MES'); 
   maquinaId = signal<number | ''>('');
-  
-  // Pestañas UI
-  activeTab = signal<'PRODUCTOS' | 'ALERTAS'>('PRODUCTOS');
+
+  // Datos de cada pestaña
+  topProductos = signal<TopProducto[] | null>(null);
+  monedas = signal<ResumenMoneda[] | null>(null);
+  totalPedidos = signal<number | null>(null);
+  alertas = signal<MaquinaInactiva[] | null>(null);
+
+  constructor() {
+    // Escuchar cambios en la pestaña o en los filtros para recargar los datos necesarios
+    effect(() => {
+      const tab = this.activeTab();
+      const rango = this.rangoTiempo();
+      const maq = this.maquinaId();
+
+      this.cargarDatos(tab, rango, maq);
+    });
+  }
 
   ngOnInit() {
     this.cargarMaquinas();
-    this.cargarEstadisticas();
   }
 
   cargarMaquinas() {
@@ -60,31 +74,41 @@ export class EstadisticasComponent implements OnInit {
     });
   }
 
-  cargarEstadisticas() {
+  private cargarDatos(tab: TabType, rango: string, maq: number | '') {
     this.loading.set(true);
-    let params: Record<string, string | number> = { rangoTiempo: this.rangoTiempo() };
-    if (this.maquinaId() !== '') {
-      params['maquinaId'] = this.maquinaId();
-    }
+    let params: Record<string, string | number> = { rangoTiempo: rango };
+    if (maq !== '') params['maquinaId'] = maq;
 
-    this.api.get<EstadisticasDto>('estadisticas', params).subscribe({
-      next: (data) => {
-        this.stats.set(data);
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false)
-    });
+    if (tab === 'PRODUCTOS') {
+      this.api.get<TopProducto[]>('estadisticas/top-productos', params).subscribe({
+        next: (data) => { this.topProductos.set(data); this.loading.set(false); },
+        error: () => this.loading.set(false)
+      });
+    } else if (tab === 'MONEDAS') {
+      this.api.get<ResumenMoneda[]>('estadisticas/monedas', params).subscribe({
+        next: (data) => { this.monedas.set(data); this.loading.set(false); },
+        error: () => this.loading.set(false)
+      });
+    } else if (tab === 'PEDIDOS') {
+      this.api.get<number>('estadisticas/pedidos', params).subscribe({
+        next: (data) => { this.totalPedidos.set(data); this.loading.set(false); },
+        error: () => this.loading.set(false)
+      });
+    } else if (tab === 'ALERTAS') {
+      this.api.get<MaquinaInactiva[]>('estadisticas/alertas').subscribe({
+        next: (data) => { this.alertas.set(data); this.loading.set(false); },
+        error: () => this.loading.set(false)
+      });
+    }
   }
 
   cambiarRango(evt: Event) {
     const val = (evt.target as HTMLSelectElement).value;
     this.rangoTiempo.set(val);
-    this.cargarEstadisticas();
   }
 
   cambiarMaquina(evt: Event) {
     const val = (evt.target as HTMLSelectElement).value;
     this.maquinaId.set(val === '' ? '' : +val);
-    this.cargarEstadisticas();
   }
 }
