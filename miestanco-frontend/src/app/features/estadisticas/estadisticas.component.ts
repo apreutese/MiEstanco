@@ -25,6 +25,17 @@ export interface ResumenMoneda {
   cantidadEnviada: number;
 }
 
+export interface ResumenMonedasGlobal {
+  totalGlobal: ResumenMoneda[];
+  porMaquina: MonedasPorMaquina[];
+}
+
+export interface MonedasPorMaquina {
+  maquinaId: number;
+  nombreMaquina: string;
+  monedas: ResumenMoneda[];
+}
+
 type TabType = 'PRODUCTOS' | 'MONEDAS' | 'PEDIDOS' | 'ALERTAS';
 
 export interface ResumenPedidos {
@@ -57,11 +68,13 @@ export class EstadisticasComponent implements OnInit {
 
   // Filtros (cada pestaña puede usar los mismos campos en HTML pero unidos a estos signals)
   rangoTiempo = signal<string>('MES'); 
+  fechaInicio = signal<string>('');
+  fechaFin = signal<string>('');
   maquinaId = signal<string>('');
 
   // Datos de cada pestaña
   topProductos = signal<TopProducto[] | null>(null);
-  monedas = signal<ResumenMoneda[] | null>(null);
+  monedas = signal<ResumenMonedasGlobal | null>(null);
   totalPedidos = signal<ResumenPedidos | null>(null);
   alertas = signal<MaquinaInactiva[] | null>(null);
 
@@ -70,9 +83,14 @@ export class EstadisticasComponent implements OnInit {
     effect(() => {
       const tab = this.activeTab();
       const rango = this.rangoTiempo();
+      const fInicio = this.fechaInicio();
+      const fFin = this.fechaFin();
       const maq = this.maquinaId();
 
-      this.cargarDatos(tab, rango, maq);
+      // Solo recargar si no es custom, o si es custom y tiene ambas fechas
+      if (rango !== 'CUSTOM' || (fInicio && fFin)) {
+        this.cargarDatos(tab, rango, fInicio, fFin, maq);
+      }
     });
   }
 
@@ -86,10 +104,16 @@ export class EstadisticasComponent implements OnInit {
     });
   }
 
-  private cargarDatos(tab: TabType, rango: string, maq: string) {
+  private cargarDatos(tab: TabType, rango: string, fInicio: string, fFin: string, maq: string) {
     this.loading.set(true);
     let params: Record<string, string | number> = { rangoTiempo: rango };
-    if (maq !== '' && tab !== 'PEDIDOS') { // La pestaña de pedidos ignora el filtro de máquina global
+    
+    if (rango === 'CUSTOM' && fInicio && fFin) {
+      params['fechaInicio'] = fInicio;
+      params['fechaFin'] = fFin;
+    }
+    
+    if (maq !== '') { 
       params['maquinaId'] = maq;
     }
 
@@ -99,7 +123,7 @@ export class EstadisticasComponent implements OnInit {
         error: () => this.loading.set(false)
       });
     } else if (tab === 'MONEDAS') {
-      this.api.get<ResumenMoneda[]>('estadisticas/monedas', params).subscribe({
+      this.api.get<ResumenMonedasGlobal>('estadisticas/monedas', params).subscribe({
         next: (data) => { this.monedas.set(data); this.loading.set(false); },
         error: () => this.loading.set(false)
       });
@@ -119,6 +143,12 @@ export class EstadisticasComponent implements OnInit {
   cambiarRango(evt: Event) {
     const val = (evt.target as HTMLSelectElement).value;
     this.rangoTiempo.set(val);
+  }
+
+  cambiarFecha(tipo: 'inicio' | 'fin', evt: Event) {
+    const val = (evt.target as HTMLInputElement).value;
+    if (tipo === 'inicio') this.fechaInicio.set(val);
+    else this.fechaFin.set(val);
   }
 
   cambiarMaquina(evt: Event) {

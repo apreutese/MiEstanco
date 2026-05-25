@@ -145,15 +145,63 @@
   gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  
-  .form-select--inline {
-    width: auto;
-    min-width: 150px;
-    background-color: var(--surface);
+  align-items: center;
+}
+
+.custom-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+
+  input[type="date"] {
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .dates-sep {
+    color: var(--text-muted);
+    font-weight: 500;
   }
 }
 
-// ── MONEDAS ──
+.form-select--inline {
+  width: auto;
+  min-width: 150px;
+  background-color: var(--surface);
+}
+
+// ── MONEDAS POR MÁQUINA ──
+.maquinas-monedas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.maquina-monedas-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+
+  .maquina-monedas-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+}
+
 .coin-list {
   list-style: none;
   margin: 0;

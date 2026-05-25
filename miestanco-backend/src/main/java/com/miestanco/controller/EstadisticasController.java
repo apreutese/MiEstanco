@@ -10,6 +10,7 @@ import com.miestanco.model.LineaPedidoMoneda;
 import com.miestanco.repository.MaquinaRepository;
 import com.miestanco.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -34,10 +36,21 @@ public class EstadisticasController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<EstadisticasDto.TopProducto>>> getTopProductos(
             @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
-            @RequestParam(required = false) Long maquinaId) {
+            @RequestParam(required = false) Long maquinaId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
-        LocalDateTime desde = getFechaDesde(rangoTiempo);
-        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, LocalDateTime.now());
+        LocalDateTime desde;
+        LocalDateTime hasta;
+        if ("CUSTOM".equalsIgnoreCase(rangoTiempo) && fechaInicio != null && fechaFin != null) {
+            desde = fechaInicio.atStartOfDay();
+            hasta = fechaFin.atTime(23, 59, 59);
+        } else {
+            desde = getFechaDesde(rangoTiempo);
+            hasta = LocalDateTime.now();
+        }
+
+        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, hasta);
 
         Map<Long, EstadisticasDto.TopProducto> productosMap = new HashMap<>();
 
@@ -62,41 +75,100 @@ public class EstadisticasController {
 
     @GetMapping("/monedas")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<EstadisticasDto.ResumenMoneda>>> getMonedasEnviadas(
+    public ResponseEntity<ApiResponse<EstadisticasDto.ResumenMonedasGlobal>> getMonedas(
             @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
-            @RequestParam(required = false) Long maquinaId) {
+            @RequestParam(required = false) Long maquinaId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
-        LocalDateTime desde = getFechaDesde(rangoTiempo);
-        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, LocalDateTime.now());
+        LocalDateTime desde;
+        LocalDateTime hasta;
+        if ("CUSTOM".equalsIgnoreCase(rangoTiempo) && fechaInicio != null && fechaFin != null) {
+            desde = fechaInicio.atStartOfDay();
+            hasta = fechaFin.atTime(23, 59, 59);
+        } else {
+            desde = getFechaDesde(rangoTiempo);
+            hasta = LocalDateTime.now();
+        }
 
-        Map<Long, EstadisticasDto.ResumenMoneda> monedasMap = new HashMap<>();
+        // Filtrado por máquina si se proporciona
+        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, hasta);
+
+        // Map: MaquinaId -> (Map: MonedaId -> ResumenMoneda)
+        Map<Long, Map<Long, EstadisticasDto.ResumenMoneda>> maquinaMonedasMap = new HashMap<>();
+        Map<Long, String> maquinaNombres = new HashMap<>();
+        Map<Long, EstadisticasDto.ResumenMoneda> globalMonedasMap = new HashMap<>();
 
         for (Pedido p : pedidos) {
+            Long mId = p.getMaquina().getId();
+            String mNombre = p.getMaquina().getNombre();
+            maquinaNombres.put(mId, mNombre);
+            
+            maquinaMonedasMap.putIfAbsent(mId, new HashMap<>());
+            Map<Long, EstadisticasDto.ResumenMoneda> monedasMap = maquinaMonedasMap.get(mId);
+
             for (LineaPedidoMoneda lm : p.getLineasMoneda()) {
-                Long mId = lm.getMoneda().getId();
-                int mValor = lm.getMoneda().getValorCentimos();
-                monedasMap.putIfAbsent(mId, new EstadisticasDto.ResumenMoneda(mId, mValor, 0));
-                monedasMap.get(mId).setCantidadEnviada(
-                    monedasMap.get(mId).getCantidadEnviada() + lm.getCantidad()
+                Long monId = lm.getMoneda().getId();
+                int valor = lm.getMoneda().getValorCentimos();
+                
+                // Agrupar por máquina
+                monedasMap.putIfAbsent(monId, new EstadisticasDto.ResumenMoneda(monId, valor, 0));
+                monedasMap.get(monId).setCantidadEnviada(
+                    monedasMap.get(monId).getCantidadEnviada() + lm.getCantidad()
+                );
+                
+                // Agrupar global
+                globalMonedasMap.putIfAbsent(monId, new EstadisticasDto.ResumenMoneda(monId, valor, 0));
+                globalMonedasMap.get(monId).setCantidadEnviada(
+                    globalMonedasMap.get(monId).getCantidadEnviada() + lm.getCantidad()
                 );
             }
         }
 
-        List<EstadisticasDto.ResumenMoneda> result = monedasMap.values().stream()
+        List<EstadisticasDto.MonedasPorMaquina> listaPorMaquina = new ArrayList<>();
+        for (Map.Entry<Long, Map<Long, EstadisticasDto.ResumenMoneda>> entry : maquinaMonedasMap.entrySet()) {
+            Long mId = entry.getKey();
+            List<EstadisticasDto.ResumenMoneda> monedasOrdenadas = entry.getValue().values().stream()
+                    .sorted(Comparator.comparing(EstadisticasDto.ResumenMoneda::getValorCentimos).reversed())
+                    .collect(Collectors.toList());
+            
+            listaPorMaquina.add(new EstadisticasDto.MonedasPorMaquina(mId, maquinaNombres.get(mId), monedasOrdenadas));
+        }
+
+        listaPorMaquina.sort(Comparator.comparing(EstadisticasDto.MonedasPorMaquina::getNombreMaquina));
+
+        List<EstadisticasDto.ResumenMoneda> totalGlobal = globalMonedasMap.values().stream()
                 .sorted(Comparator.comparing(EstadisticasDto.ResumenMoneda::getValorCentimos).reversed())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(ApiResponse.ok(result));
+        EstadisticasDto.ResumenMonedasGlobal global = EstadisticasDto.ResumenMonedasGlobal.builder()
+                .totalGlobal(totalGlobal)
+                .porMaquina(listaPorMaquina)
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.ok(global));
     }
 
     @GetMapping("/pedidos")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<EstadisticasDto.ResumenPedidos>> getTotalPedidos(
-            @RequestParam(required = false, defaultValue = "MES") String rangoTiempo) {
+            @RequestParam(required = false, defaultValue = "MES") String rangoTiempo,
+            @RequestParam(required = false) Long maquinaId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
-        // Ya no recibimos maquinaId porque la pestaña listará todas las máquinas
-        LocalDateTime desde = getFechaDesde(rangoTiempo);
-        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, null, desde, LocalDateTime.now());
+        LocalDateTime desde;
+        LocalDateTime hasta;
+        if ("CUSTOM".equalsIgnoreCase(rangoTiempo) && fechaInicio != null && fechaFin != null) {
+            desde = fechaInicio.atStartOfDay();
+            hasta = fechaFin.atTime(23, 59, 59);
+        } else {
+            desde = getFechaDesde(rangoTiempo);
+            hasta = LocalDateTime.now();
+        }
+
+        // Filtrado por máquina si se proporciona
+        List<Pedido> pedidos = pedidoRepository.findHistorial(EstadoPedido.ENTREGADO, maquinaId, desde, hasta);
 
         Map<Long, EstadisticasDto.PedidosPorMaquina> map = new HashMap<>();
         

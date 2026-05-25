@@ -42,6 +42,24 @@ public class EstadisticasDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    public static class ResumenMonedasGlobal {
+        private List<ResumenMoneda> totalGlobal;
+        private List<MonedasPorMaquina> porMaquina;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MonedasPorMaquina {
+        private Long maquinaId;
+        private String nombreMaquina;
+        private List<ResumenMoneda> monedas;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class ResumenPedidos {
         private int totalGlobal;
         private List<PedidosPorMaquina> porMaquina;
