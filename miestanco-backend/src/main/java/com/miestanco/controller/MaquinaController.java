@@ -95,4 +95,12 @@ public class MaquinaController {
         maquinaService.activar(id);
         return ResponseEntity.ok(ApiResponse.ok("Máquina activada", null));
     }
+
+    @DeleteMapping("/admin/limpiar-duplicados")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar máquinas duplicadas por nombre (mantiene la de menor id)")
+    public ResponseEntity<ApiResponse<String>> limpiarDuplicados() {
+        int eliminados = maquinaService.eliminarDuplicados();
+        return ResponseEntity.ok(ApiResponse.ok("Máquinas duplicadas eliminadas: " + eliminados, null));
+    }
 }

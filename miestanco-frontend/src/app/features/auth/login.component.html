@@ -19,7 +19,7 @@
                type="text"
                formControlName="username"
                autocomplete="username"
-               placeholder="padre / trabajadora1"
+               placeholder="Tu usuario"
                [class.field__input--error]="form.get('username')?.invalid && form.get('username')?.touched" />
         @if (form.get('username')?.hasError('required') && form.get('username')?.touched) {
           <span class="field__error">El usuario es obligatorio</span>

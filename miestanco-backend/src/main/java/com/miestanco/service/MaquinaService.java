@@ -17,6 +17,7 @@ public class MaquinaService {
     private final BarRepository barRepository;
     private final ProductoRepository productoRepository;
     private final MonedaRepository monedaRepository;
+    private final jakarta.persistence.EntityManager em;
 
     @Transactional(readOnly = true)
     public List<Maquina> listarActivas() {
@@ -78,5 +79,12 @@ public class MaquinaService {
         Maquina maquina = obtenerPorId(id);
         maquina.setActiva(true);
         maquinaRepository.save(maquina);
+    }
+
+    @Transactional
+    public int eliminarDuplicados() {
+        em.createNativeQuery("DELETE FROM maquina_productos WHERE maquina_id IN (SELECT id FROM (SELECT m1.id FROM maquinas m1 WHERE m1.id > (SELECT MIN(m2.id) FROM maquinas m2 WHERE m2.nombre = m1.nombre)) AS dup)").executeUpdate();
+        em.createNativeQuery("DELETE FROM maquina_monedas WHERE maquina_id IN (SELECT id FROM (SELECT m1.id FROM maquinas m1 WHERE m1.id > (SELECT MIN(m2.id) FROM maquinas m2 WHERE m2.nombre = m1.nombre)) AS dup)").executeUpdate();
+        return em.createNativeQuery("DELETE FROM maquinas WHERE id IN (SELECT id FROM (SELECT m1.id FROM maquinas m1 WHERE m1.id > (SELECT MIN(m2.id) FROM maquinas m2 WHERE m2.nombre = m1.nombre)) AS dup)").executeUpdate();
     }
 }
