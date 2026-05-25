@@ -10,7 +10,9 @@ INSERT IGNORE INTO monedas (id, denominacion, valor_centimos) VALUES
 (3, '20 céntimos', 20),
 (4, '50 céntimos', 50),
 (5, '1 euro',      100),
-(6, '2 euros',     200);
+(6, '2 euros',     200),
+(7, '1 céntimo',   1),
+(8, '2 céntimos',  2);
 
 -- Usuarios demo
 -- Contraseñas hasheadas con BCrypt (todas son "1234")
