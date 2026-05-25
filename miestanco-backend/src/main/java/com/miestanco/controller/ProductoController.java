@@ -57,6 +57,9 @@ public class ProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nuevo producto")
     public ResponseEntity<ApiResponse<Producto>> crear(@RequestBody Producto producto) {
+        if (producto.getActivo() == null) {
+            producto.setActivo(true);
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok("Producto creado", productoService.crear(producto)));
     }
