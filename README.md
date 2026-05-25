@@ -1,20 +1,19 @@
 # MiEstanco
 
-Progressive Web App para la gestión integral de máquinas de tabaco en estancos. Permite a los propietarios revisar máquinas en bares, crear pedidos desde el móvil (con o sin conexión), y que el equipo en tienda los prepare y entregue de forma coordinada.
+Progressive Web App para la gestión integral de máquinas de tabaco en estancos. Permite a los propietarios revisar máquinas en bares, crear pedidos desde el móvil, y que el equipo en tienda los prepare y entregue de forma coordinada.
 
 ## ✨ Características principales
 
 ### Gestión de pedidos
 - ✅ Crear pedidos desde móvil con productos y monedas
 - 📋 Estados: Pendiente → En preparación → Listo → Entregado
-- 🔔 Notificaciones push en tiempo real
-- 📦 Líneas de pedido con productos y monedas
+-  Líneas de pedido con productos y monedas
+- ✏️ Marcar items como preparados
 
-### Modo offline
-- � Sincronización automática al reconectar
-- 💾 Almacenamiento local con IndexedDB
-- 📱 Service Workers para caché inteligente
-- ⚡ Funciona sin conexión a internet
+### PWA y caché
+- 📱 Service Workers para caché de assets
+- ⚡ Carga rápida de recursos estáticos
+- 💾 Instalable como app nativa
 
 ### Estadísticas y reportes
 - 📊 Dashboard con gráficos interactivos
