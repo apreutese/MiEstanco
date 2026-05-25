@@ -49,9 +49,9 @@ Progressive Web App para la gestión integral de máquinas de tabaco en estancos
 - **Angular 21** con Standalone Components
 - **Angular Material** para componentes UI
 - **RxJS** para programación reactiva
-- **Service Workers** para modo offline
-- **IndexedDB** para almacenamiento local
+- **Service Workers** para caché de assets
 - **SCSS** con sistema de temas dinámicos
+- **ngx-image-cropper** para recorte de imágenes
 
 ### DevOps
 - **Maven** para gestión de dependencias backend
@@ -90,9 +90,10 @@ Kit_Digital/
 │   │   │   ├── estadisticas/       # Dashboard y reportes
 │   │   │   └── perfil/             # Perfil y temas
 │   │   ├── core/                   # Servicios core
-│   │   │   ├── services/           # API, Auth, Theme, Sync
+│   │   │   ├── services/           # API, Auth, Theme
 │   │   │   ├── guards/             # Protección de rutas
-│   │   │   └── interceptors/       # HTTP interceptors
+│   │   │   ├── interceptors/       # JWT interceptor
+│   │   │   └── models/             # Interfaces TypeScript
 │   │   ├── shared/                 # Componentes compartidos
 │   │   └── layout/                 # Shell y navegación
 │   ├── public/                     # Assets estáticos
