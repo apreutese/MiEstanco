@@ -181,15 +181,7 @@ npm run serve:prod
 - **Backend API**: http://localhost:8080/api
 - **Swagger UI**: http://localhost:8080/api/swagger-ui.html
 
-### 5. Usuarios de prueba
-
-| Usuario | Contraseña | Rol |
-|---------|-----------|-----|
-| padre | 1234 | Admin |
-| madre | 1234 | Admin |
-| admin | 1234 | Admin |
-| trabajadora1 | 1234 | Trabajador |
-| trabajadora2 | 1234 | Trabajador |
+> **Nota**: Los usuarios de prueba se crean automáticamente al arrancar el backend por primera vez. Consulta el archivo `data.sql` para más información.
 
 ## 📱 Instalar como PWA
 
@@ -197,14 +189,6 @@ npm run serve:prod
 2. Haz clic en el icono de instalación en la barra de direcciones
 3. Confirma la instalación
 4. La app aparecerá como aplicación nativa
-
-## 🎨 Temas disponibles
-
-La aplicación incluye 3 temas visuales personalizables desde el perfil:
-
-- **Marlboro Red** (rojo intenso)
-- **Marlboro Gold** (dorado elegante)
-- **Tabacos** (granate clásico)
 
 ## 🔌 API Endpoints principales
 
@@ -267,4 +251,4 @@ Proyecto desarrollado para el módulo de **Digitalización Aplicada** (1º DAM),
 
 ## 📄 Licencia
 
-Proyecto académico - 2025
+Proyecto académico - 2026
