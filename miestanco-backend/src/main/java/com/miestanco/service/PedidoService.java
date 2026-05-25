@@ -196,7 +196,7 @@ public class PedidoService {
 
     private void validarTransicion(EstadoPedido actual, EstadoPedido nuevo) {
         boolean valida = switch (actual) {
-            case PENDIENTE -> nuevo == EstadoPedido.EN_PREPARACION || nuevo == EstadoPedido.CANCELADO;
+            case PENDIENTE -> nuevo == EstadoPedido.EN_PREPARACION || nuevo == EstadoPedido.PREPARADO || nuevo == EstadoPedido.CANCELADO;
             case EN_PREPARACION -> nuevo == EstadoPedido.PREPARADO || nuevo == EstadoPedido.CANCELADO;
             case PREPARADO -> nuevo == EstadoPedido.ENTREGADO || nuevo == EstadoPedido.CANCELADO;
             default -> false;
