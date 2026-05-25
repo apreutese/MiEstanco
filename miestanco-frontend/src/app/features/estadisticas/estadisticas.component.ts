@@ -45,7 +45,7 @@ export class EstadisticasComponent implements OnInit {
 
   // Filtros (cada pestaña puede usar los mismos campos en HTML pero unidos a estos signals)
   rangoTiempo = signal<string>('MES'); 
-  maquinaId = signal<number | ''>('');
+  maquinaId = signal<string>('');
 
   // Datos de cada pestaña
   topProductos = signal<TopProducto[] | null>(null);
@@ -74,10 +74,10 @@ export class EstadisticasComponent implements OnInit {
     });
   }
 
-  private cargarDatos(tab: TabType, rango: string, maq: number | '') {
+  private cargarDatos(tab: TabType, rango: string, maq: string) {
     this.loading.set(true);
     let params: Record<string, string | number> = { rangoTiempo: rango };
-    if (maq !== '') params['maquinaId'] = maq;
+    if (maq !== '') params['maquinaId'] = maq; // maq ya es string, la API lo convierte a número automáticamente
 
     if (tab === 'PRODUCTOS') {
       this.api.get<TopProducto[]>('estadisticas/top-productos', params).subscribe({
@@ -109,6 +109,6 @@ export class EstadisticasComponent implements OnInit {
 
   cambiarMaquina(evt: Event) {
     const val = (evt.target as HTMLSelectElement).value;
-    this.maquinaId.set(val === '' ? '' : +val);
+    this.maquinaId.set(val);
   }
 }
