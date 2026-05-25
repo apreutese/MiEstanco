@@ -54,7 +54,6 @@ public class EstadisticasController {
 
         List<EstadisticasDto.TopProducto> top = productosMap.values().stream()
                 .sorted(Comparator.comparing(EstadisticasDto.TopProducto::getCantidadVendida).reversed())
-                .limit(5)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(ApiResponse.ok(top));
