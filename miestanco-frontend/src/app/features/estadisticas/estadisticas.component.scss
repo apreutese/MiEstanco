@@ -192,13 +192,30 @@
   padding: 1.5rem;
   box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 
+  .accordion-header {
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: none;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .expand-icon {
+    transition: transform 0.3s ease;
+    color: var(--text-muted);
+    
+    &.rotated {
+      transform: rotate(180deg);
+    }
+  }
+
   .maquina-monedas-title {
     margin: 0 0 1rem 0;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--text);
-    border-bottom: 2px solid var(--border);
-    padding-bottom: 0.5rem;
   }
 }
 

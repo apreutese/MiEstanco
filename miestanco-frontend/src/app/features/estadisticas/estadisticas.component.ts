@@ -91,6 +91,9 @@ export class EstadisticasComponent implements OnInit {
   totalPedidos = signal<ResumenPedidos | null>(null);
   alertas = signal<MaquinaInactiva[] | null>(null);
 
+  // Estado para acordeón de máquinas
+  maquinasExpandidas = signal<Record<number, boolean>>({});
+
   constructor() {
     // Escuchar cambios en la pestaña o en los filtros para recargar los datos necesarios
     effect(() => {
@@ -167,5 +170,12 @@ export class EstadisticasComponent implements OnInit {
   cambiarMaquina(evt: Event) {
     const val = (evt.target as HTMLSelectElement).value;
     this.maquinaId.set(val);
+  }
+
+  toggleMaquina(id: number) {
+    this.maquinasExpandidas.update(state => ({
+      ...state,
+      [id]: !state[id]
+    }));
   }
 }
