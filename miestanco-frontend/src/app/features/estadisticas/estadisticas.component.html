@@ -113,11 +113,8 @@
                 @for (m of monedas(); track m.monedaId) {
                   <li class="coin-item">
                     <div class="coin-item__left">
-                      <div class="coin-badge" 
-                           [class.coin-200]="m.valorCentimos === 200"
-                           [class.coin-100]="m.valorCentimos === 100"
-                           [class.coin-cents]="m.valorCentimos < 100">
-                        {{ m.valorCentimos >= 100 ? (m.valorCentimos/100 | number:'1.0-2') + '€' : m.valorCentimos + 'c' }}
+                      <div class="coin-badge-img">
+                        <img [src]="'/assets/monedas/' + m.valorCentimos + '.png'" [alt]="m.valorCentimos + ' centimos'" />
                       </div>
                       <div class="coin-info">
                         <span class="coin-name">
