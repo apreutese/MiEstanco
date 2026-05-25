@@ -124,12 +124,21 @@
     <!-- Acciones de estado -->
     @if (pedido()!.estado !== EstadoPedido.ENTREGADO && pedido()!.estado !== EstadoPedido.CANCELADO) {
       <div class="detalle-actions">
+        
         @if (pedido()!.estado === EstadoPedido.PENDIENTE) {
-          <button class="btn-primary" id="btn-iniciar" [disabled]="guardando()"
-                  (click)="cambiarEstado(EstadoPedido.EN_PREPARACION)">
-            <mat-icon>play_arrow</mat-icon> Iniciar preparación
-          </button>
+          @if (todoPreparado()) {
+            <button class="btn-primary" id="btn-preparado-directo" [disabled]="guardando()"
+                    (click)="cambiarEstado(EstadoPedido.PREPARADO)">
+              <mat-icon>check_circle</mat-icon> Marcar como preparado
+            </button>
+          } @else {
+            <button class="btn-primary" id="btn-iniciar" [disabled]="guardando()"
+                    (click)="cambiarEstado(EstadoPedido.EN_PREPARACION)">
+              <mat-icon>play_arrow</mat-icon> Iniciar preparación
+            </button>
+          }
         }
+
         @if (pedido()!.estado === EstadoPedido.EN_PREPARACION) {
           <button class="btn-primary" id="btn-preparado" [disabled]="guardando() || !todoPreparado()"
                   (click)="cambiarEstado(EstadoPedido.PREPARADO)"
