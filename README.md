@@ -29,9 +29,42 @@ App de gestión de máquinas de tabaco para estancos. Permite a los propietarios
 Kit_Digital/
 ├── miestanco-backend/      # API REST (Spring Boot)
 ├── miestanco-frontend/     # PWA (Angular)
-├── docs/                   # Documentación Kit Digital
+├── db/                     # Scripts SQL
+├── ARRANCAR_MIESTANCO.bat  # Script de inicio rápido
 └── README.md
 ```
+
+## Inicio rápido
+
+### Requisitos previos
+- Java 21
+- Node.js 18+
+- MySQL 8
+- Maven
+
+### Arrancar la aplicación
+
+Ejecuta el script de inicio:
+```bash
+ARRANCAR_MIESTANCO.bat
+```
+
+O manualmente:
+
+1. **Base de datos**: Importa `db/miestanco.sql` en MySQL
+2. **Backend**: 
+   ```bash
+   cd miestanco-backend
+   mvn spring-boot:run
+   ```
+3. **Frontend**:
+   ```bash
+   cd miestanco-frontend
+   npm install
+   npm start
+   ```
+
+La app estará disponible en `http://localhost:4200`
 
 ## Proyecto académico
 
