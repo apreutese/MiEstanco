@@ -65,7 +65,7 @@ export class MaquinasListComponent implements OnInit {
   ngOnInit() {
     this.cargar();
     this.barSvc.listar().subscribe(b => { this.bares.set(b.filter(x => x.activo)); this.cdr.markForCheck(); });
-    this.prodSvc.listar().subscribe(p => { this.productos.set(p); this.cdr.markForCheck(); });
+    this.prodSvc.listarTodos().subscribe(p => { this.productos.set(p); this.cdr.markForCheck(); });
     this.apiSvc.get<Moneda[]>('monedas').subscribe(m => { this.monedas.set(m); this.cdr.markForCheck(); });
   }
 

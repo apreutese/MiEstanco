@@ -11,6 +11,7 @@ export interface ProductoPayload {
 export class ProductoService {
   private api = inject(ApiService);
   listar(): Observable<Producto[]>                         { return this.api.get<Producto[]>('productos'); }
+  listarTodos(): Observable<Producto[]>                    { return this.api.get<Producto[]>('productos/todos'); }
   obtener(id: number): Observable<Producto>               { return this.api.get<Producto>(`productos/${id}`); }
   crear(p: ProductoPayload): Observable<Producto>         { return this.api.post<Producto>('productos', p); }
   editar(id: number, p: ProductoPayload): Observable<Producto> { return this.api.put<Producto>(`productos/${id}`, p); }
