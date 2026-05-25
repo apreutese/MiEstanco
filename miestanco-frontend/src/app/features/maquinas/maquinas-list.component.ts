@@ -51,6 +51,13 @@ export class MaquinasListComponent implements OnInit {
     );
   });
 
+  busquedaProductosModal = signal('');
+  
+  readonly productosFiltradosModal = computed(() => {
+    const q = this.busquedaProductosModal().toLowerCase();
+    return this.productos().filter(p => !q || p.nombre.toLowerCase().includes(q));
+  });
+
   ngOnInit() {
     this.cargar();
     this.barSvc.listar().subscribe(b => { this.bares.set(b.filter(x => x.activo)); this.cdr.markForCheck(); });

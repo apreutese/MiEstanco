@@ -123,9 +123,16 @@
 
         <!-- Productos -->
         <div class="form-group">
-          <label class="form-label">Productos que puede pedir ({{ productosSeleccionados().size }} seleccionados)</label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem;">
+            <label class="form-label" style="margin:0;">Productos ({{ productosSeleccionados().size }} sel.)</label>
+            <div class="search-box search-box--small">
+              <mat-icon style="font-size:16px; width:16px; height:16px;">search</mat-icon>
+              <input type="text" placeholder="Buscar producto..." 
+                     [value]="busquedaProductosModal()" (input)="busquedaProductosModal.set($any($event.target).value)" />
+            </div>
+          </div>
           <div class="checkbox-grid">
-            @for (p of productos(); track p.id) {
+            @for (p of productosFiltradosModal(); track p.id) {
               <label class="checkbox-item" [class.selected]="isProductoSelected(p.id)">
                 <input type="checkbox" [checked]="isProductoSelected(p.id)"
                        (change)="toggleProducto(p.id)" />

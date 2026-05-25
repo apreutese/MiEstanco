@@ -42,6 +42,13 @@ export class CrearPedidoComponent implements OnInit {
     this.lineasProducto().reduce((s, l) => s + l.producto.precio * l.cantidad, 0)
   );
 
+  busquedaProductos = signal('');
+  
+  readonly lineasProductoFiltradas = computed(() => {
+    const q = this.busquedaProductos().toLowerCase();
+    return this.lineasProducto().filter(l => !q || l.producto.nombre.toLowerCase().includes(q));
+  });
+
   readonly puedeGuardar = computed(() =>
     this.maquinaSeleccionada() !== null &&
     (this.lineasProducto().length > 0 || this.lineasMoneda().length > 0)
@@ -92,8 +99,8 @@ export class CrearPedidoComponent implements OnInit {
     }
   }
 
-  setCantidadProducto(idx: number, cantidad: number) {
-    this.lineasProducto.update(l => l.map((item, i) => i === idx ? { ...item, cantidad: Math.max(0, cantidad) } : item));
+  setCantidadProducto(productoId: number, cantidad: number) {
+    this.lineasProducto.update(l => l.map(item => item.producto.id === productoId ? { ...item, cantidad: Math.max(0, cantidad) } : item));
   }
 
   setCantidadMoneda(idx: number, cantidad: number) {

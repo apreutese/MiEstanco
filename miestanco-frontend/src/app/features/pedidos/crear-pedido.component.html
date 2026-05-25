@@ -67,13 +67,20 @@
   <!-- Productos -->
   @if (maquinaSeleccionada() && lineasProducto().length > 0) {
     <div class="cp-step fade-in">
-      <div class="cp-step__label">
-        <span class="cp-step__num">3</span>
-        <span class="cp-step__text">Productos</span>
+      <div class="cp-step__label" style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+        <div>
+          <span class="cp-step__num">3</span>
+          <span class="cp-step__text">Productos</span>
+        </div>
+        <div class="search-box search-box--small" style="margin-top:0; width:auto; min-width: 150px;">
+          <mat-icon style="font-size:18px; width:18px; height:18px;">search</mat-icon>
+          <input type="text" placeholder="Buscar..." 
+                 [value]="busquedaProductos()" (input)="busquedaProductos.set($any($event.target).value)" />
+        </div>
       </div>
       <div class="cp-section cp-section--no-pad">
         <div class="cp-cards">
-          @for (linea of lineasProducto(); track linea.producto.id; let i = $index) {
+          @for (linea of lineasProductoFiltradas(); track linea.producto.id) {
             <div class="cp-card" [class.cp-card--active]="linea.cantidad > 0">
 
               <!-- Imagen del producto -->
@@ -101,26 +108,26 @@
                 <div class="cp-card__ctrl">
                   <button class="cp-carton-btn cp-carton-btn--minus"
                           [disabled]="linea.cantidad < 10"
-                          (click)="setCantidadProducto(i, linea.cantidad - 10)"
-                          [id]="'btn-menos10-prod-' + i">-10</button>
+                          (click)="setCantidadProducto(linea.producto.id, linea.cantidad - 10)"
+                          [id]="'btn-menos10-prod-' + linea.producto.id">-10</button>
 
                   <button class="cp-card__btn cp-card__btn--minus"
                           [disabled]="linea.cantidad === 0"
-                          (click)="setCantidadProducto(i, linea.cantidad - 1)"
-                          [id]="'btn-menos-prod-' + i">
+                          (click)="setCantidadProducto(linea.producto.id, linea.cantidad - 1)"
+                          [id]="'btn-menos-prod-' + linea.producto.id">
                     <mat-icon>remove</mat-icon>
                   </button>
                   <span class="cp-card__qty" [class.cp-card__qty--active]="linea.cantidad > 0">{{ linea.cantidad }}</span>
 
                   <button class="cp-card__btn cp-card__btn--plus"
-                          (click)="setCantidadProducto(i, linea.cantidad + 1)"
-                          [id]="'btn-mas-prod-' + i">
+                          (click)="setCantidadProducto(linea.producto.id, linea.cantidad + 1)"
+                          [id]="'btn-mas-prod-' + linea.producto.id">
                     <mat-icon>add</mat-icon>
                   </button>
 
                   <button class="cp-carton-btn"
-                          (click)="setCantidadProducto(i, linea.cantidad + 10)"
-                          [id]="'btn-carton-prod-' + i">+10</button>
+                          (click)="setCantidadProducto(linea.producto.id, linea.cantidad + 10)"
+                          [id]="'btn-carton-prod-' + linea.producto.id">+10</button>
                 </div>
               </div>
 
